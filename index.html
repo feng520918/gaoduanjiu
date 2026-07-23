@@ -337,31 +337,32 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   color: #1e3a5f; font-weight: 700; margin-left: 4px;
   font-variant-numeric: tabular-nums;
 }
-/* 右侧：1列布局 — 每行一个指标，3个值（标签|均值|求和）横排对齐 */
-.avg-items { display: flex; flex-direction: column; gap: 4px; }
+/* 右侧：4行精简 — 标签 | 均值 / 求和（合并显示） */
+.avg-items { display: flex; flex-direction: column; gap: 5px; }
 .avg-item {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 10px; border-radius: 4px;
+  padding: 7px 12px; border-radius: 4px;
   background: #f8fafc; border: 1px solid #e2e8f0;
-  min-height: 30px; gap: 8px;
+  min-height: 32px; gap: 10px;
 }
 .avg-item .avg-lbl {
-  font-size: 11px; color: #475569; font-weight: 600;
-  white-space: nowrap; display: flex; align-items: center; flex: 1.6;
+  font-size: 12px; color: #475569; font-weight: 600;
+  white-space: nowrap; display: flex; align-items: center;
 }
 .avg-item .avg-lbl::before {
   content: ''; display: inline-block;
   width: 3px; height: 12px; background: #10b981;
-  border-radius: 1.5px; margin-right: 5px;
+  border-radius: 1.5px; margin-right: 6px;
 }
-.avg-item .avg-val {
-  font-size: 12px; font-weight: 700; color: #1e3a5f;
-  font-variant-numeric: tabular-nums;
-  background: #fff; padding: 2px 8px; border-radius: 3px;
-  border: 1px solid #e2e8f0; min-width: 60px; text-align: right;
-  flex: 0.9;
+.avg-combo {
+  font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums;
+  display: flex; align-items: baseline; gap: 4px;
+  background: #fff; padding: 3px 12px; border-radius: 3px;
+  border: 1px solid #e2e8f0;
 }
-.avg-item .avg-val.sum { color: #b45309; border-color: #fde68a; background: #fffbeb; flex: 1.1; }
+.avg-combo .avg-avg { color: #1e3a5f; }
+.avg-combo .sep { color: #94a3b8; font-weight: 400; margin: 0 3px; font-size: 12px; }
+.avg-combo .avg-sum { color: #b45309; }
 
 /* 经销商详情折线图 */
 .dealer-detail-chart { margin: 12px 0; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -1551,31 +1552,23 @@ function renderDealerTable() {
   var avgOpenD = total > 0 ? (sumOpenD / total).toFixed(1) : '0';
   var avgOpenO = total > 0 ? (sumOpenO / total).toFixed(1) : '0';
 
-  // 头部标签行：指标 | 均值 | 求和
-  function avgItem(lbl, avgVal, sumVal, isPct, noSum) {
-    var sumHtml = noSum
-      ? '<span class="avg-val sum" style="color:#94a3b8;background:transparent;border-color:transparent">—</span>'
-      : '<span class="avg-val sum">' + sumVal + (isPct ? '%' : '') + '</span>';
+  // 4行精简版：标签 | 均值 / 求和（斜杠分隔）
+  function comboItem(lbl, avgVal, sumVal) {
     return '<div class="avg-item">' +
       '<span class="avg-lbl">' + lbl + '</span>' +
-      '<span class="avg-val">' + avgVal + (isPct ? '%' : '') + '</span>' +
-      sumHtml +
+      '<span class="avg-combo">' +
+        '<span class="avg-avg">' + avgVal + '</span>' +
+        '<span class="sep">/</span>' +
+        '<span class="avg-sum">' + sumVal + '</span>' +
+      '</span>' +
     '</div>';
   }
   var rightHtml = '<div class="stats-panel-title">筛选客户指标<span class="badge">共 ' + total + ' 家</span></div>';
   rightHtml += '<div class="avg-items">';
-  rightHtml += '<div class="avg-item" style="background:#eef2ff;border-color:#c7d2fe;min-height:26px;padding:4px 10px">';
-  rightHtml += '<span class="avg-lbl" style="font-weight:700;color:#1e3a5f">指标</span>';
-  rightHtml += '<span class="avg-val" style="background:#dbeafe;border-color:#93c5fd">均值</span>';
-  rightHtml += '<span class="avg-val sum" style="background:#fef3c7;border-color:#fde68a">求和</span>';
-  rightHtml += '</div>';
-  rightHtml += avgItem('订单 (箱)', avgOrder, sumOrder.toLocaleString(), false, false);
-  rightHtml += avgItem('同城配 (箱)', avgDeliv, sumDeliv.toLocaleString(), false, false);
-  rightHtml += avgItem('消费者开瓶 (瓶)', avgConsOpen, sumConsOpen.toLocaleString(), false, false);
-  rightHtml += avgItem('活动开瓶 (瓶)', avgActOpen, sumActOpen.toLocaleString(), false, false);
-  rightHtml += avgItem('累计动销率', avgMoveR, '—', true, true);
-  rightHtml += avgItem('开瓶率 (同城配)', avgOpenD, '—', true, true);
-  rightHtml += avgItem('开瓶率 (订单)', avgOpenO, '—', true, true);
+  rightHtml += comboItem('订单 (箱)', avgOrder, sumOrder.toLocaleString());
+  rightHtml += comboItem('同城配 (箱)', avgDeliv, sumDeliv.toLocaleString());
+  rightHtml += comboItem('消费者开瓶 (瓶)', avgConsOpen, sumConsOpen.toLocaleString());
+  rightHtml += comboItem('活动开瓶 (瓶)', avgActOpen, sumActOpen.toLocaleString());
   rightHtml += '</div>';
   document.getElementById('statsRight').innerHTML = rightHtml;
 
