@@ -337,17 +337,17 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   color: #1e3a5f; font-weight: 700; margin-left: 4px;
   font-variant-numeric: tabular-nums;
 }
-/* 右侧：3列 grid — label | 均值 | 求和 */
-.avg-items { display: grid; grid-template-columns: 1.4fr 0.8fr 0.8fr; gap: 4px 6px; }
+/* 右侧：1列布局 — 每行一个指标，3个值（标签|均值|求和）横排对齐 */
+.avg-items { display: flex; flex-direction: column; gap: 4px; }
 .avg-item {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 5px 8px; border-radius: 4px;
+  padding: 6px 10px; border-radius: 4px;
   background: #f8fafc; border: 1px solid #e2e8f0;
-  min-height: 28px; gap: 6px;
+  min-height: 30px; gap: 8px;
 }
 .avg-item .avg-lbl {
   font-size: 11px; color: #475569; font-weight: 600;
-  white-space: nowrap; display: flex; align-items: center;
+  white-space: nowrap; display: flex; align-items: center; flex: 1.6;
 }
 .avg-item .avg-lbl::before {
   content: ''; display: inline-block;
@@ -357,10 +357,11 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .avg-item .avg-val {
   font-size: 12px; font-weight: 700; color: #1e3a5f;
   font-variant-numeric: tabular-nums;
-  background: #fff; padding: 1px 6px; border-radius: 3px;
-  border: 1px solid #e2e8f0; min-width: 50px; text-align: right;
+  background: #fff; padding: 2px 8px; border-radius: 3px;
+  border: 1px solid #e2e8f0; min-width: 60px; text-align: right;
+  flex: 0.9;
 }
-.avg-item .avg-val.sum { color: #b45309; border-color: #fde68a; background: #fffbeb; }
+.avg-item .avg-val.sum { color: #b45309; border-color: #fde68a; background: #fffbeb; flex: 1.1; }
 
 /* 经销商详情折线图 */
 .dealer-detail-chart { margin: 12px 0; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -1562,8 +1563,8 @@ function renderDealerTable() {
     '</div>';
   }
   var rightHtml = '<div class="stats-panel-title">筛选客户指标<span class="badge">共 ' + total + ' 家</span></div>';
-  rightHtml += '<div class="avg-items" style="grid-template-columns: 1.6fr 0.7fr 0.7fr">';
-  rightHtml += '<div class="avg-item" style="background:#eef2ff;border-color:#c7d2fe;min-height:24px;padding:3px 8px">';
+  rightHtml += '<div class="avg-items">';
+  rightHtml += '<div class="avg-item" style="background:#eef2ff;border-color:#c7d2fe;min-height:26px;padding:4px 10px">';
   rightHtml += '<span class="avg-lbl" style="font-weight:700;color:#1e3a5f">指标</span>';
   rightHtml += '<span class="avg-val" style="background:#dbeafe;border-color:#93c5fd">均值</span>';
   rightHtml += '<span class="avg-val sum" style="background:#fef3c7;border-color:#fde68a">求和</span>';
@@ -1572,9 +1573,9 @@ function renderDealerTable() {
   rightHtml += avgItem('同城配 (箱)', avgDeliv, sumDeliv.toLocaleString(), false, false);
   rightHtml += avgItem('消费者开瓶 (瓶)', avgConsOpen, sumConsOpen.toLocaleString(), false, false);
   rightHtml += avgItem('活动开瓶 (瓶)', avgActOpen, sumActOpen.toLocaleString(), false, false);
-  rightHtml += avgItem('累计动销率', avgMoveR, avgMoveR, true, true);
-  rightHtml += avgItem('开瓶率(同城配)', avgOpenD, avgOpenD, true, true);
-  rightHtml += avgItem('开瓶率(订单)', avgOpenO, avgOpenO, true, true);
+  rightHtml += avgItem('累计动销率', avgMoveR, '—', true, true);
+  rightHtml += avgItem('开瓶率 (同城配)', avgOpenD, '—', true, true);
+  rightHtml += avgItem('开瓶率 (订单)', avgOpenO, '—', true, true);
   rightHtml += '</div>';
   document.getElementById('statsRight').innerHTML = rightHtml;
 
