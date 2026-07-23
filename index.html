@@ -246,19 +246,27 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 /* 拨杆范围筛选 — 单行紧凑布局 */
 .dealer-toolbar-range {
   margin-top: -6px !important; margin-bottom: 5px !important;
-  padding: 5px 12px 6px !important;
-  border-top: none !important; border-radius: 0 0 10px 10px !important;
+  padding: 6px 12px 8px !important;
+  border-top: 1px dashed #e2e8f0 !important;
+  border-radius: 0 0 10px 10px !important;
   display: flex !important; flex-direction: row !important;
-  gap: 10px !important; align-items: flex-end !important;
-  background: #fff !important;
+  gap: 14px !important; align-items: stretch !important;
+  background: linear-gradient(180deg, #f8fafc 0%, #fff 100%) !important;
 }
-.range-slider-wrap { display: flex; flex-direction: column; align-items: stretch; gap: 2px; flex: 1; min-width: 85px; }
-.range-slider-wrap > label { font-size: 9px; font-weight: 600; color: #64748b; white-space: nowrap; }
-.dual-range { position: relative; width: 100%; height: 22px; }
-.dual-range .track { position: absolute; top: 9px; left: 0; right: 0; height: 4px; background: #e2e8f0; border-radius: 2px; z-index: 1; }
-.dual-range .fill { position: absolute; top: 9px; height: 4px; background: #3b82f6; border-radius: 2px; z-index: 2; }
+.range-slider-wrap {
+  display: flex; flex-direction: column; align-items: stretch; gap: 4px;
+  flex: 1; min-width: 110px; padding: 0 4px;
+  border-left: 1px solid #e2e8f0;
+}
+.range-slider-wrap:first-child { border-left: none; padding-left: 0; }
+.range-label-row { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.range-slider-wrap > .range-label-row > label { font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap; letter-spacing: .3px; }
+.range-display { font-size: 11px; color: #1e3a5f; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dual-range { position: relative; width: 100%; height: 20px; margin-top: 2px; }
+.dual-range .track { position: absolute; top: 8px; left: 0; right: 0; height: 4px; background: #e2e8f0; border-radius: 2px; z-index: 1; }
+.dual-range .fill { position: absolute; top: 8px; height: 4px; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 2px; z-index: 2; }
 .dual-range input[type="range"] {
-  position: absolute; top: 0; left: 0; width: 100%; height: 22px;
+  position: absolute; top: 0; left: 0; width: 100%; height: 20px;
   -webkit-appearance: none; appearance: none; background: transparent;
   pointer-events: none; margin: 0; padding: 0; outline: none;
 }
@@ -266,44 +274,93 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .dual-range input[type="range"].range-max { z-index: 4; }
 .dual-range input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none; pointer-events: auto;
-  width: 16px; height: 16px; border-radius: 50%;
-  background: #3b82f6; cursor: grab; border: 2px solid #fff;
-  box-shadow: 0 1px 5px rgba(59,130,246,.45);
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; cursor: grab; border: 2.5px solid #3b82f6;
+  box-shadow: 0 1px 4px rgba(59,130,246,.4);
 }
-.dual-range input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; background: #2563eb; }
+.dual-range input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; background: #3b82f6; transform: scale(1.15); }
 .dual-range input[type="range"]::-moz-range-thumb {
-  pointer-events: auto; width: 16px; height: 16px; border-radius: 50%;
-  background: #3b82f6; cursor: grab; border: 2px solid #fff;
-  box-shadow: 0 1px 5px rgba(59,130,246,.45);
+  pointer-events: auto; width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; cursor: grab; border: 2.5px solid #3b82f6;
+  box-shadow: 0 1px 4px rgba(59,130,246,.4);
 }
 .dual-range input[type="range"]::-webkit-slider-runnable-track { height: 4px; background: transparent; }
-.range-display { font-size: 9px; color: #3b82f6; font-weight: 600; white-space: nowrap; text-align: center; }
 
-/* 汇总区 — 左右对称，白色面板，4行对齐 */
+/* 汇总区 — 左右对称，统一的 key-value 列表风格 */
 .dealer-stats-bar {
-  display: flex; gap: 0; margin-bottom: 5px; padding: 0;
+  display: flex; gap: 8px; margin-bottom: 6px; padding: 0;
   background: transparent; border-radius: 6px; box-shadow: none;
-  font-size: 10px;
+  font-size: 11px;
 }
 .stats-panel-left, .stats-panel-right {
-  flex: 1; padding: 5px 8px; display: flex; flex-direction: column; gap: 3px;
-  background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.03);
+  flex: 1; padding: 6px 10px; display: flex; flex-direction: column; gap: 4px;
+  background: #fff; border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
+  border: 1px solid #e2e8f0;
 }
-.stats-panel-left { margin-right: 3px; }
-.stats-panel-right { margin-left: 3px; }
-.stats-panel-title { color: #475569; font-size: 10px; font-weight: 700; margin-bottom: 0; }
-/* 左侧：4行，与右侧格式一致 */
-.dealer-stats-group { display: flex; align-items: center; gap: 4px; padding: 3px 5px; border-radius: 3px; background: #f8fafc; border: 1px solid #e2e8f0; }
-.dealer-stats-group strong { color: #475569; font-size: 9px; font-weight: 700; white-space: nowrap; min-width: 44px; }
-.dealer-stats-items { display: flex; gap: 2px; flex-wrap: wrap; flex: 1; }
-.dealer-stats-item { background: #fff; padding: 1px 4px; border-radius: 2px; color: #334155; border: 1px solid #e2e8f0; font-size: 9px; cursor: pointer; white-space: nowrap; }
-.dealer-stats-item:hover { background: #f0f7ff; border-color: #93c5fd; }
-.dealer-stats-item span { color: #3b82f6; font-weight: 700; margin-left: 1px; }
-/* 右侧均值 — 与左侧行高一致，4行×2列对齐 */
-.avg-items { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 4px; }
-.avg-item { display: flex; justify-content: space-between; align-items: center; padding: 3px 5px; border-radius: 3px; background: #f8fafc; border: 1px solid #e2e8f0; }
-.avg-item .avg-lbl { font-size: 9px; color: #64748b; }
-.avg-item .avg-val { font-size: 10px; font-weight: 700; color: #1e3a5f; }
+.stats-panel-title {
+  color: #1e3a5f; font-size: 12px; font-weight: 700;
+  margin-bottom: 2px; padding-bottom: 4px;
+  border-bottom: 1px dashed #e2e8f0;
+  display: flex; align-items: center; gap: 6px;
+}
+.stats-panel-title .badge {
+  background: #1e3a5f; color: #fff; font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 8px; margin-left: auto;
+}
+/* 左侧：与右侧行高统一 — 每行 label + 多个值（chip） */
+.dealer-stats-group {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 8px; border-radius: 4px;
+  background: #f8fafc; border: 1px solid #e2e8f0;
+  min-height: 28px;
+}
+.dealer-stats-group strong {
+  color: #475569; font-size: 11px; font-weight: 700;
+  white-space: nowrap; min-width: 64px; flex-shrink: 0;
+  display: flex; align-items: center;
+}
+.dealer-stats-group strong::before {
+  content: ''; display: inline-block;
+  width: 3px; height: 12px; background: #3b82f6;
+  border-radius: 1.5px; margin-right: 5px;
+}
+.dealer-stats-items { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+.dealer-stats-item {
+  background: #fff; padding: 2px 7px; border-radius: 3px;
+  color: #475569; border: 1px solid #e2e8f0;
+  font-size: 11px; cursor: pointer; white-space: nowrap;
+  transition: all .15s;
+}
+.dealer-stats-item:hover { background: #eff6ff; border-color: #93c5fd; color: #1e3a5f; }
+.dealer-stats-item b {
+  color: #1e3a5f; font-weight: 700; margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+}
+/* 右侧：3列 grid — label | 均值 | 求和 */
+.avg-items { display: grid; grid-template-columns: 1.4fr 0.8fr 0.8fr; gap: 4px 6px; }
+.avg-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 8px; border-radius: 4px;
+  background: #f8fafc; border: 1px solid #e2e8f0;
+  min-height: 28px; gap: 6px;
+}
+.avg-item .avg-lbl {
+  font-size: 11px; color: #475569; font-weight: 600;
+  white-space: nowrap; display: flex; align-items: center;
+}
+.avg-item .avg-lbl::before {
+  content: ''; display: inline-block;
+  width: 3px; height: 12px; background: #10b981;
+  border-radius: 1.5px; margin-right: 5px;
+}
+.avg-item .avg-val {
+  font-size: 12px; font-weight: 700; color: #1e3a5f;
+  font-variant-numeric: tabular-nums;
+  background: #fff; padding: 1px 6px; border-radius: 3px;
+  border: 1px solid #e2e8f0; min-width: 50px; text-align: right;
+}
+.avg-item .avg-val.sum { color: #b45309; border-color: #fde68a; background: #fffbeb; }
 
 /* 经销商详情折线图 */
 .dealer-detail-chart { margin: 12px 0; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -764,49 +821,59 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 <!-- 拨杆范围筛选 — 单行5列 -->
 <div class="dealer-toolbar dealer-toolbar-range">
   <div class="range-slider-wrap">
-    <label>订单(箱)</label>
+    <div class="range-label-row">
+      <label>订单</label>
+      <span class="range-display" id="dispOrder">0 ~ 1000</span>
+    </div>
     <div class="dual-range">
       <div class="track"></div><div class="fill" id="fillOrder"></div>
       <input type="range" class="range-min" id="rangeOrderMin" min="0" max="1000" value="0" oninput="onRangeInput('Order')">
       <input type="range" class="range-max" id="rangeOrderMax" min="0" max="1000" value="1000" oninput="onRangeInput('Order')">
     </div>
-    <span class="range-display" id="dispOrder">0 ~ 1000</span>
   </div>
   <div class="range-slider-wrap">
-    <label>同城配(箱)</label>
+    <div class="range-label-row">
+      <label>同城配</label>
+      <span class="range-display" id="dispDelivery">0 ~ 1000</span>
+    </div>
     <div class="dual-range">
       <div class="track"></div><div class="fill" id="fillDelivery"></div>
       <input type="range" class="range-min" id="rangeDeliveryMin" min="0" max="1000" value="0" oninput="onRangeInput('Delivery')">
       <input type="range" class="range-max" id="rangeDeliveryMax" min="0" max="1000" value="1000" oninput="onRangeInput('Delivery')">
     </div>
-    <span class="range-display" id="dispDelivery">0 ~ 1000</span>
   </div>
   <div class="range-slider-wrap">
-    <label>开瓶(瓶)</label>
+    <div class="range-label-row">
+      <label>开瓶</label>
+      <span class="range-display" id="dispScan">0 ~ 1000</span>
+    </div>
     <div class="dual-range">
       <div class="track"></div><div class="fill" id="fillScan"></div>
       <input type="range" class="range-min" id="rangeScanMin" min="0" max="1000" value="0" oninput="onRangeInput('Scan')">
       <input type="range" class="range-max" id="rangeScanMax" min="0" max="1000" value="1000" oninput="onRangeInput('Scan')">
     </div>
-    <span class="range-display" id="dispScan">0 ~ 1000</span>
   </div>
   <div class="range-slider-wrap">
-    <label>动销率(%)</label>
+    <div class="range-label-row">
+      <label>动销率</label>
+      <span class="range-display" id="dispMove">0 ~ 100%</span>
+    </div>
     <div class="dual-range">
       <div class="track"></div><div class="fill" id="fillMove"></div>
       <input type="range" class="range-min" id="rangeMoveMin" min="0" max="100" value="0" oninput="onRangeInput('Move')">
       <input type="range" class="range-max" id="rangeMoveMax" min="0" max="100" value="100" oninput="onRangeInput('Move')">
     </div>
-    <span class="range-display" id="dispMove">0 ~ 100</span>
   </div>
   <div class="range-slider-wrap">
-    <label>开瓶率(%)</label>
+    <div class="range-label-row">
+      <label>开瓶率</label>
+      <span class="range-display" id="dispOpen">0 ~ 100%</span>
+    </div>
     <div class="dual-range">
       <div class="track"></div><div class="fill" id="fillOpen"></div>
       <input type="range" class="range-min" id="rangeOpenMin" min="0" max="100" value="0" oninput="onRangeInput('Open')">
       <input type="range" class="range-max" id="rangeOpenMax" min="0" max="100" value="100" oninput="onRangeInput('Open')">
     </div>
-    <span class="range-display" id="dispOpen">0 ~ 100</span>
   </div>
 </div>
 <!-- 汇总区 — 左右对称 -->
@@ -1277,7 +1344,17 @@ function initDealerTable() {
   document.getElementById('dealerTotalCount').textContent = DATA.dealers.length;
   // 动态设置滑块最大值（基于全部经销商）
   updateSliderMaxValues(DATA.dealers);
-  ['Order','Delivery','Scan','Move','Open'].forEach(function(p) { 
+  // 首次加载：重置所有滑块为不限制状态（min=0, max=当前最大值）
+  ['Order','Delivery','Scan'].forEach(function(p) {
+    var maxEl = document.getElementById('range' + p + 'Max');
+    if (maxEl) maxEl.value = maxEl.max;
+    document.getElementById('range' + p + 'Min').value = 0;
+  });
+  ['Move','Open'].forEach(function(p) {
+    document.getElementById('range' + p + 'Min').value = 0;
+    document.getElementById('range' + p + 'Max').value = 100;
+  });
+  ['Order','Delivery','Scan','Move','Open'].forEach(function(p) {
     updateRangeVisual(p); 
     var minEl = document.getElementById('range' + p + 'Min');
     var maxEl = document.getElementById('range' + p + 'Max');
@@ -1309,7 +1386,10 @@ function updateRangeVisual(prefix) {
     fill.style.right = (100 - maxV / max * 100) + '%';
   }
   var disp = document.getElementById('disp' + prefix);
-  if (disp) disp.textContent = minV + ' ~ ' + maxV;
+  if (disp) {
+    var isPct = (prefix === 'Move' || prefix === 'Open');
+    disp.textContent = minV + ' ~ ' + maxV + (isPct ? '%' : '');
+  }
 }
 function onRangeInput(prefix) {
   updateRangeVisual(prefix);
@@ -1435,53 +1515,66 @@ function renderDealerTable() {
 
   function buildStatsHtml(title, stats, field) {
     var items = Object.keys(stats).sort().map(function(k) {
-      return '<span class="dealer-stats-item" onclick="setQuickFilter(\'' + field + '\', \'' + k.replace(/'/g, "\\'") + '\')">' + k + '<span>' + stats[k] + '家</span></span>';
+      return '<span class="dealer-stats-item" onclick="setQuickFilter(\'' + field + '\', \'' + k.replace(/'/g, "\\'") + '\')">' + k + '<b>' + stats[k] + '家</b></span>';
     }).join('');
     return '<div class="dealer-stats-group"><strong>' + title + '</strong><div class="dealer-stats-items">' + items + '</div></div>';
   }
 
-  // 左侧：分类统计 — 4行纵向排列
-  var leftHtml = '<div class="stats-panel-title">经销商分类统计 (共 ' + total + ' 家)</div>';
+  // 左侧：分类统计 — 4行纵向排列，与右侧风格统一
+  var leftHtml = '<div class="stats-panel-title">经销商分类统计<span class="badge">共 ' + total + ' 家</span></div>';
   leftHtml += buildStatsHtml('客户类型', typeStats, '客户类型');
   leftHtml += buildStatsHtml('客户属性', attrStats, '客户属性');
   leftHtml += buildStatsHtml('三级分类', clsStats, '三级分类');
   leftHtml += buildStatsHtml('市场类型', marketStats, '市场类型');
   document.getElementById('statsLeft').innerHTML = leftHtml;
 
-  // 右侧：均值统计
-  var avgOrder = 0, avgDeliv = 0, avgConsOpen = 0, avgActOpen = 0;
-  var avgMoveR = 0, avgOpenD = 0, avgOpenO = 0;
+  // 右侧：均值 + 求和 统计
+  var sumOrder = 0, sumDeliv = 0, sumConsOpen = 0, sumActOpen = 0;
+  var sumMoveR = 0, sumOpenD = 0, sumOpenO = 0;
   if (total > 0) {
     DEALER_FILTERED.forEach(function(d) {
-      avgOrder += (d['订单_箱'] || 0);
-      avgDeliv += (d['同城配_箱'] || 0);
-      avgConsOpen += (d['消费者开瓶_瓶'] || 0);
-      avgActOpen += (d['活动开瓶_瓶'] || 0);
-      avgMoveR += (d['累计动销率'] || 0);
-      avgOpenD += (d['累计开瓶率_同城配'] || 0);
-      avgOpenO += (d['累计开瓶率_订单'] || 0);
+      sumOrder += (d['订单_箱'] || 0);
+      sumDeliv += (d['同城配_箱'] || 0);
+      sumConsOpen += (d['消费者开瓶_瓶'] || 0);
+      sumActOpen += (d['活动开瓶_瓶'] || 0);
+      sumMoveR += (d['累计动销率'] || 0);
+      sumOpenD += (d['累计开瓶率_同城配'] || 0);
+      sumOpenO += (d['累计开瓶率_订单'] || 0);
     });
-    avgOrder = Math.round(avgOrder / total);
-    avgDeliv = Math.round(avgDeliv / total);
-    avgConsOpen = Math.round(avgConsOpen / total);
-    avgActOpen = Math.round(avgActOpen / total);
-    avgMoveR = (avgMoveR / total).toFixed(1);
-    avgOpenD = (avgOpenD / total).toFixed(1);
-    avgOpenO = (avgOpenO / total).toFixed(1);
   }
-  function avgItem(lbl, val, unit) {
-    return '<div class="avg-item"><span class="avg-lbl">' + lbl + '</span><span class="avg-val">' + val + (unit||'') + '</span></div>';
+  var avgOrder = total > 0 ? Math.round(sumOrder / total) : 0;
+  var avgDeliv = total > 0 ? Math.round(sumDeliv / total) : 0;
+  var avgConsOpen = total > 0 ? Math.round(sumConsOpen / total) : 0;
+  var avgActOpen = total > 0 ? Math.round(sumActOpen / total) : 0;
+  var avgMoveR = total > 0 ? (sumMoveR / total).toFixed(1) : '0';
+  var avgOpenD = total > 0 ? (sumOpenD / total).toFixed(1) : '0';
+  var avgOpenO = total > 0 ? (sumOpenO / total).toFixed(1) : '0';
+
+  // 头部标签行：指标 | 均值 | 求和
+  function avgItem(lbl, avgVal, sumVal, isPct, noSum) {
+    var sumHtml = noSum
+      ? '<span class="avg-val sum" style="color:#94a3b8;background:transparent;border-color:transparent">—</span>'
+      : '<span class="avg-val sum">' + sumVal + (isPct ? '%' : '') + '</span>';
+    return '<div class="avg-item">' +
+      '<span class="avg-lbl">' + lbl + '</span>' +
+      '<span class="avg-val">' + avgVal + (isPct ? '%' : '') + '</span>' +
+      sumHtml +
+    '</div>';
   }
-  var rightHtml = '<div class="stats-panel-title">筛选客户指标均值 (共 ' + total + ' 家)</div>';
-  rightHtml += '<div class="avg-items">';
-  rightHtml += avgItem('订单(箱) 均值', avgOrder, '');
-  rightHtml += avgItem('同城配(箱) 均值', avgDeliv, '');
-  rightHtml += avgItem('消费者开瓶(瓶) 均值', avgConsOpen, '');
-  rightHtml += avgItem('活动开瓶(瓶) 均值', avgActOpen, '');
-  rightHtml += avgItem('累计动销率 均值', avgMoveR, '%');
-  rightHtml += avgItem('开瓶率(同城配) 均值', avgOpenD, '%');
-  rightHtml += avgItem('开瓶率(订单) 均值', avgOpenO, '%');
-  rightHtml += avgItem('汇总', total, ' 家');
+  var rightHtml = '<div class="stats-panel-title">筛选客户指标<span class="badge">共 ' + total + ' 家</span></div>';
+  rightHtml += '<div class="avg-items" style="grid-template-columns: 1.6fr 0.7fr 0.7fr">';
+  rightHtml += '<div class="avg-item" style="background:#eef2ff;border-color:#c7d2fe;min-height:24px;padding:3px 8px">';
+  rightHtml += '<span class="avg-lbl" style="font-weight:700;color:#1e3a5f">指标</span>';
+  rightHtml += '<span class="avg-val" style="background:#dbeafe;border-color:#93c5fd">均值</span>';
+  rightHtml += '<span class="avg-val sum" style="background:#fef3c7;border-color:#fde68a">求和</span>';
+  rightHtml += '</div>';
+  rightHtml += avgItem('订单 (箱)', avgOrder, sumOrder.toLocaleString(), false, false);
+  rightHtml += avgItem('同城配 (箱)', avgDeliv, sumDeliv.toLocaleString(), false, false);
+  rightHtml += avgItem('消费者开瓶 (瓶)', avgConsOpen, sumConsOpen.toLocaleString(), false, false);
+  rightHtml += avgItem('活动开瓶 (瓶)', avgActOpen, sumActOpen.toLocaleString(), false, false);
+  rightHtml += avgItem('累计动销率', avgMoveR, avgMoveR, true, true);
+  rightHtml += avgItem('开瓶率(同城配)', avgOpenD, avgOpenD, true, true);
+  rightHtml += avgItem('开瓶率(订单)', avgOpenO, avgOpenO, true, true);
   rightHtml += '</div>';
   document.getElementById('statsRight').innerHTML = rightHtml;
 
@@ -1939,35 +2032,69 @@ function showViolationTooltip(e, idx) {
     document.body.appendChild(tt);
   }
 
+  // 工具：去重并连接
+  function uniqueJoin(arr, max) {
+    var seen = {};
+    var out = [];
+    arr.forEach(function(v) {
+      if (v && v !== '-' && !seen[v]) { seen[v] = true; out.push(v); }
+    });
+    if (max && out.length > max) out = out.slice(0, max).concat(['...等' + (arr.length) + '条']);
+    return out.join('、') || '-';
+  }
+  function fmtRange(dates) {
+    var arr = dates.filter(function(x){ return x; }).sort();
+    if (arr.length === 0) return '-';
+    if (arr[0] === arr[arr.length-1]) return arr[0];
+    return arr[0] + ' ~ ' + arr[arr.length-1];
+  }
+
   var html = '';
   if (data.type === 'kq') {
-    html += '<div class="tt-title">客情造假 (' + data.records.length + '条)</div>';
-    html += '<div class="tt-row"><span class="tt-lbl">次数:</span><span class="tt-val">' + (data.totalCount || data.records.length) + '次</span></div>';
-    data.records.forEach(function(r, i) {
-      html += '<div class="tt-row"><span class="tt-lbl">时间:</span><span class="tt-val">' + (r['时间'] || '-') + '</span></div>';
-      html += '<div class="tt-row"><span class="tt-lbl">活动名称:</span><span class="tt-val">' + (r['活动名称'] || '-') + '</span></div>';
-      html += '<div class="tt-row"><span class="tt-lbl">违规简述:</span><span class="tt-val">' + (r['违规简述'] || '-') + '</span></div>';
-      if (i < data.records.length - 1) html += '<div style="border-top:1px solid #f0f0f0;margin:3px 0"></div>';
-    });
+    // 客情造假：聚合展示
+    var recs = data.records;
+    var times = recs.map(function(r){ return r['时间']; });
+    var activities = recs.map(function(r){ return r['活动名称']; });
+    var descs = recs.map(function(r){ return r['违规简述']; });
+    html += '<div class="tt-title">客情造假（' + recs.length + '条）</div>';
+    html += '<div class="tt-row"><span class="tt-lbl">次数</span><span class="tt-val"><b>' + (data.totalCount || recs.length) + '次</b></span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">时间范围</span><span class="tt-val">' + fmtRange(times) + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">活动名称</span><span class="tt-val">' + uniqueJoin(activities) + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">违规简述</span><span class="tt-val">' + uniqueJoin(descs) + '</span></div>';
   } else {
-    html += '<div class="tt-title">一般违约查收 (' + data.records.length + '条)</div>';
-    html += '<div class="tt-row"><span class="tt-lbl">瓶数:</span><span class="tt-val">' + (data.totalBottles || 0) + '瓶 (共' + data.records.length + '条)</span></div>';
-    data.records.forEach(function(r, i) {
-      html += '<div class="tt-row"><span class="tt-lbl">产品渠道:</span><span class="tt-val">' + (r['产品渠道'] || '-') + '</span></div>';
-      html += '<div class="tt-row"><span class="tt-lbl">产品度数:</span><span class="tt-val">' + (r['产品度数'] || '-') + '</span></div>';
-      html += '<div class="tt-row"><span class="tt-lbl">通知日期:</span><span class="tt-val">' + (r['通知日期'] || '-') + '</span></div>';
-      html += '<div class="tt-row"><span class="tt-lbl">认定数量:</span><span class="tt-val">' + (r['认定数量'] || 0) + '瓶</span></div>';
-      html += '<div class="tt-row"><span class="tt-lbl">违约行为:</span><span class="tt-val">' + (r['认定违约行为'] || '-') + '</span></div>';
-      html += '<div class="tt-row"><span class="tt-lbl">违约渠道:</span><span class="tt-val">' + (r['违约渠道'] || '-') + '</span></div>';
-      html += '<div class="tt-row"><span class="tt-lbl">查收价格:</span><span class="tt-val">' + (r['查收价格'] || 0) + '元/瓶</span></div>';
-      if (i < data.records.length - 1) html += '<div style="border-top:1px solid #f0f0f0;margin:3px 0"></div>';
+    // 一般违约查收：聚合展示 + 瓶数求和
+    var recs = data.records;
+    var totalBottles = data.totalBottles || 0;
+    var totalAmount = 0;
+    var channels = [], degrees = [], dates = [], actions = [], wqChannels = [], prices = [];
+    recs.forEach(function(r) {
+      totalAmount += ((r['查收价格'] || 0) * (r['认定数量'] || 0));
+      if (r['产品渠道']) channels.push(r['产品渠道']);
+      if (r['产品度数']) degrees.push(r['产品度数']);
+      if (r['通知日期']) dates.push(r['通知日期']);
+      if (r['认定违约行为']) actions.push(r['认定违约行为']);
+      if (r['违约渠道']) wqChannels.push(r['违约渠道']);
+      if (r['查收价格']) prices.push(r['查收价格']);
     });
+    html += '<div class="tt-title">一般违约查收（' + recs.length + '条）</div>';
+    html += '<div class="tt-row"><span class="tt-lbl">总瓶数</span><span class="tt-val"><b>' + totalBottles + '瓶</b></span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">查收金额</span><span class="tt-val"><b>' + totalAmount.toLocaleString() + '元</b></span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">产品渠道</span><span class="tt-val">' + uniqueJoin(channels) + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">产品度数</span><span class="tt-val">' + uniqueJoin(degrees) + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">通知日期</span><span class="tt-val">' + fmtRange(dates) + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">违约行为</span><span class="tt-val">' + uniqueJoin(actions) + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">违约渠道</span><span class="tt-val">' + uniqueJoin(wqChannels) + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">查收价格</span><span class="tt-val">' + uniqueJoin(prices, 3) + (prices.length>3?'':'元/瓶') + '</span></div>';
   }
 
   tt.innerHTML = html;
   tt.style.display = 'block';
-  tt.style.left = Math.min(e.clientX + 14, window.innerWidth - 380) + 'px';
-  tt.style.top = Math.min(e.clientY + 14, window.innerHeight - 220) + 'px';
+  // 自适应位置，避免超出屏幕
+  var ttW = 360, ttH = tt.offsetHeight || 240;
+  var px = Math.min(e.clientX + 14, window.innerWidth - ttW - 10);
+  var py = Math.min(e.clientY + 14, window.innerHeight - ttH - 10);
+  tt.style.left = Math.max(8, px) + 'px';
+  tt.style.top = Math.max(8, py) + 'px';
 
   setTimeout(function() {
     var ch = function(ev) {
