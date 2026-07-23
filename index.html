@@ -293,7 +293,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   font-size: 11px;
 }
 .stats-panel-left, .stats-panel-right {
-  flex: 1; padding: 6px 10px; display: flex; flex-direction: column; gap: 4px;
+  flex: 1; padding: 6px 10px; display: flex; flex-direction: column; gap: 5px;
   background: #fff; border-radius: 6px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
   border: 1px solid #e2e8f0;
@@ -308,12 +308,12 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   background: #1e3a5f; color: #fff; font-size: 10px; font-weight: 600;
   padding: 1px 6px; border-radius: 8px; margin-left: auto;
 }
-/* 左侧：与右侧行高统一 — 每行 label + 多个值（chip） */
+/* 左侧：与右侧行高严格对齐，统一卡片风格 */
 .dealer-stats-group {
-  display: flex; align-items: center; gap: 8px;
-  padding: 5px 8px; border-radius: 4px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 12px; border-radius: 4px;
   background: #f8fafc; border: 1px solid #e2e8f0;
-  min-height: 28px;
+  min-height: 32px;  /* 与右侧 avg-item 对齐 */
 }
 .dealer-stats-group strong {
   color: #475569; font-size: 11px; font-weight: 700;
@@ -323,14 +323,15 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .dealer-stats-group strong::before {
   content: ''; display: inline-block;
   width: 3px; height: 12px; background: #3b82f6;
-  border-radius: 1.5px; margin-right: 5px;
+  border-radius: 1.5px; margin-right: 6px;
 }
-.dealer-stats-items { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+.dealer-stats-items { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
 .dealer-stats-item {
-  background: #fff; padding: 2px 7px; border-radius: 3px;
+  background: #fff; padding: 3px 10px; border-radius: 3px;
   color: #475569; border: 1px solid #e2e8f0;
   font-size: 11px; cursor: pointer; white-space: nowrap;
   transition: all .15s;
+  font-variant-numeric: tabular-nums;
 }
 .dealer-stats-item:hover { background: #eff6ff; border-color: #93c5fd; color: #1e3a5f; }
 .dealer-stats-item b {
