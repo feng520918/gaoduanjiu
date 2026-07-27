@@ -1514,12 +1514,14 @@ function renderDealerTable() {
   var start = (DEALER_PAGE - 1) * DEALER_PER_PAGE;
   var end = Math.min(start + DEALER_PER_PAGE, total);
 
-  var clsStats = {}, marketStats = {};
+  var clsStats = {}, marketStats = {}, typeStats = {};
   DEALER_FILTERED.forEach(function(d) {
     var c = d['三级分类'] || '未分类';
     var m = d['市场类型'] || '非孵化市场';
+    var t = d['客户类型'] || '未分类';
     clsStats[c] = (clsStats[c] || 0) + 1;
     marketStats[m] = (marketStats[m] || 0) + 1;
+    typeStats[t] = (typeStats[t] || 0) + 1;
   });
 
   // 辅助：生成分类分布字符串（最多4项，斜杠分隔）
@@ -1568,6 +1570,8 @@ function renderDealerTable() {
   leftHtml += statRow('三级分类', distStr(clsStats, ['白名单', '观察类', '风险预警']), '#3b82f6');
   // 第3行：市场类型
   leftHtml += statRow('市场类型', distStr(marketStats, ['孵化市场', '非孵化市场'], ['孵化', '非孵化']), '#3b82f6');
+  // 第4行：客户类型
+  leftHtml += statRow('客户类型', distStr(typeStats, ['团购', '专卖店', '名烟名酒', '商场', '普通']), '#3b82f6');
   leftHtml += '</div>';
   document.getElementById('statsLeft').innerHTML = leftHtml;
 
