@@ -1649,24 +1649,33 @@ function renderDealerTable() {
     var seq = i + 1;
     var hasViolation = (d['客情造假'] && d['客情造假'].length > 0) || (d['一般违约查收'] && d['一般违约查收'].length > 0);
     // 判断违规是否在一年内（红色）还是一年前（绿色），无日期默认红色
+    // 如果一年前后都有违规，同时展示红绿两个感叹号
     var oneYearAgo = new Date('2025-07-29');
-    var isRecent = false; // 一年内
+    var hasRecentViolation = false; // 一年内（含无日期）
+    var hasOldViolation = false;    // 一年前
     if (hasViolation) {
       var allDates = [];
       (d['客情造假'] || []).forEach(function(r) { if (r['时间']) allDates.push(r['时间']); });
       (d['一般违约查收'] || []).forEach(function(r) { if (r['通知日期']) allDates.push(r['通知日期']); });
       if (allDates.length === 0) {
-        isRecent = true; // 无日期默认红色
+        hasRecentViolation = true; // 无日期默认红色
       } else {
         for (var di = 0; di < allDates.length; di++) {
           var dt = new Date(allDates[di]);
-          if (!isNaN(dt.getTime()) && dt >= oneYearAgo) { isRecent = true; break; }
+          if (!isNaN(dt.getTime())) {
+            if (dt >= oneYearAgo) hasRecentViolation = true;
+            else hasOldViolation = true;
+          }
         }
       }
     }
-    var violationMark = hasViolation
-      ? ' <span style="color:' + (isRecent ? '#ef4444' : '#22c55e') + ';font-size:14px;cursor:help" title="' + (isRecent ? '一年内' : '一年前') + '违规：该经销商涉及客情造假或一般违约查收">&#9888;</span>'
-      : '';
+    var violationMark = '';
+    if (hasRecentViolation) {
+      violationMark += ' <span style="color:#ef4444;font-size:14px;cursor:help" title="一年内违规：该经销商涉及客情造假或一般违约查收">&#9888;</span>';
+    }
+    if (hasOldViolation) {
+      violationMark += ' <span style="color:#22c55e;font-size:14px;cursor:help" title="一年前违规：该经销商涉及客情造假或一般违约查收">&#9888;</span>';
+    }
     
     // Single table row (33 columns: 序号 + 主公司名称 + 31 data columns)
     html += '<tr ondblclick="showDealerDetail(' + i + ')">' +
@@ -1781,16 +1790,17 @@ function showDealerDetail(idx) {
   
   var _hasV = ((d['客情造假'] && d['客情造假'].length > 0) || (d['一般违约查收'] && d['一般违约查收'].length > 0));
   var _oneYrAgo = new Date('2025-07-29');
-  var _isRecent = false;
+  var _hasRecent = false, _hasOld = false;
   if (_hasV) {
     var _dates = [];
     (d['客情造假'] || []).forEach(function(r) { if (r['时间']) _dates.push(r['时间']); });
     (d['一般违约查收'] || []).forEach(function(r) { if (r['通知日期']) _dates.push(r['通知日期']); });
-    if (_dates.length === 0) { _isRecent = true; }
-    else { for (var _di=0; _di<_dates.length; _di++) { var _dt = new Date(_dates[_di]); if (!isNaN(_dt.getTime()) && _dt >= _oneYrAgo) { _isRecent = true; break; } } }
+    if (_dates.length === 0) { _hasRecent = true; }
+    else { for (var _di=0; _di<_dates.length; _di++) { var _dt = new Date(_dates[_di]); if (!isNaN(_dt.getTime())) { if (_dt >= _oneYrAgo) _hasRecent = true; else _hasOld = true; } } }
   }
-  var detailViolationMark = _hasV
-    ? ' <span style="color:' + (_isRecent ? '#ef4444' : '#22c55e') + ';font-size:16px" title="' + (_isRecent ? '一年内' : '一年前') + '违规">&#9888;</span>' : '';
+  var detailViolationMark = '';
+  if (_hasRecent) detailViolationMark += ' <span style="color:#ef4444;font-size:16px" title="一年内违规">&#9888;</span>';
+  if (_hasOld) detailViolationMark += ' <span style="color:#22c55e;font-size:16px" title="一年前违规">&#9888;</span>';
   var html = '<div class="dealer-detail-box">' +
     '<div class="dealer-detail-header">' +
     '<h3>' + d['主公司名称'] + detailViolationMark + ' <span style="font-size:13px;color:#64748b;font-weight:400">(' + d['主公司编码'] + ')</span></h3>' +
@@ -2168,29 +2178,40 @@ function showViolationTooltip(e, idx) {
     html += '<div class="tt-row"><span class="tt-lbl">活动名称</span><span class="tt-val">' + uniqueJoin(activities) + '</span></div>';
     html += '<div class="tt-row"><span class="tt-lbl">违规简述</span><span class="tt-val">' + uniqueJoin(descs) + '</span></div>';
   } else {
-    // 一般违约查收：聚合展示 + 瓶数求和
+    // 一般违约查收：聚合展示，无通知日期标注"流程处理中"
     var recs = data.records;
     var totalBottles = data.totalBottles || 0;
     var totalAmount = 0;
-    var channels = [], degrees = [], dates = [], actions = [], wqChannels = [], prices = [];
+    var channels = [], degrees = [], actions = [], wqChannels = [], prices = [];
+    var hasNoDate = false;
     recs.forEach(function(r) {
       totalAmount += ((r['查收价格'] || 0) * (r['认定数量'] || 0));
       if (r['产品渠道']) channels.push(r['产品渠道']);
       if (r['产品度数']) degrees.push(r['产品度数']);
-      if (r['通知日期']) dates.push(r['通知日期']);
       if (r['认定违约行为']) actions.push(r['认定违约行为']);
       if (r['违约渠道']) wqChannels.push(r['违约渠道']);
       if (r['查收价格']) prices.push(r['查收价格']);
+      if (!r['通知日期'] || r['通知日期'] === '') hasNoDate = true;
     });
+    // 构建通知日期显示：有日期的显示日期，无日期的显示"流程处理中"
+    var dateDisplay = '';
+    if (hasNoDate && recs.some(function(r){ return r['通知日期'] && r['通知日期'] !== ''; })) {
+      dateDisplay = '部分有日期，部分流程处理中';
+    } else if (hasNoDate) {
+      dateDisplay = '流程处理中';
+    } else {
+      dateDisplay = fmtRange(recs.map(function(r){ return r['通知日期']; }));
+    }
     html += '<div class="tt-title">一般违约查收（' + recs.length + '条）</div>';
-    html += '<div class="tt-row"><span class="tt-lbl">总瓶数</span><span class="tt-val"><b>' + totalBottles + '瓶</b></span></div>';
-    html += '<div class="tt-row"><span class="tt-lbl">查收金额</span><span class="tt-val"><b>' + totalAmount.toLocaleString() + '元</b></span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">认定数量总瓶数</span><span class="tt-val"><b>' + totalBottles + '瓶</b></span></div>';
     html += '<div class="tt-row"><span class="tt-lbl">产品渠道</span><span class="tt-val">' + uniqueJoin(channels) + '</span></div>';
     html += '<div class="tt-row"><span class="tt-lbl">产品度数</span><span class="tt-val">' + uniqueJoin(degrees) + '</span></div>';
-    html += '<div class="tt-row"><span class="tt-lbl">通知日期</span><span class="tt-val">' + fmtRange(dates) + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">通知日期</span><span class="tt-val">' + dateDisplay + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">瓶数（本月）</span><span class="tt-val"><b>' + (data.totalCount || recs.length) + '瓶</b></span></div>';
     html += '<div class="tt-row"><span class="tt-lbl">违约行为</span><span class="tt-val">' + uniqueJoin(actions) + '</span></div>';
     html += '<div class="tt-row"><span class="tt-lbl">违约渠道</span><span class="tt-val">' + uniqueJoin(wqChannels) + '</span></div>';
     html += '<div class="tt-row"><span class="tt-lbl">查收价格</span><span class="tt-val">' + uniqueJoin(prices, 3) + (prices.length>3?'':'元/瓶') + '</span></div>';
+    html += '<div class="tt-row"><span class="tt-lbl">查收总额</span><span class="tt-val"><b>' + totalAmount.toLocaleString() + '元</b></span></div>';
   }
 
   tt.innerHTML = html;
