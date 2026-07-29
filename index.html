@@ -244,28 +244,65 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 }
 .dealer-toolbar .btn-reset:hover { background: #f1f5f9; color: #ef4444; border-color: #fca5a5; }
 
-/* 拨杆范围筛选 — 单行紧凑布局 */
+/* 拨杆范围筛选 — 单行5列，精致风格 */
 .dealer-toolbar-range {
   margin-top: -6px !important; margin-bottom: 5px !important;
-  padding: 6px 12px 8px !important;
+  padding: 8px 12px 8px !important;
   border-top: 1px dashed #e2e8f0 !important;
   border-radius: 0 0 10px 10px !important;
   display: flex !important; flex-direction: row !important;
-  gap: 14px !important; align-items: stretch !important;
+  gap: 2px !important; align-items: stretch !important;
   background: linear-gradient(180deg, #f8fafc 0%, #fff 100%) !important;
 }
 .range-slider-wrap {
-  display: flex; flex-direction: column; align-items: stretch; gap: 4px;
-  flex: 1; min-width: 110px; padding: 0 4px;
-  border-left: 1px solid #e2e8f0;
+  display: flex; flex-direction: column; align-items: stretch; gap: 3px;
+  flex: 1; min-width: 110px; padding: 0 10px;
+  border-left: 1px dashed #e8ecf1;
+  position: relative;
 }
-.range-slider-wrap:first-child { border-left: none; padding-left: 0; }
-.range-label-row { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
-.range-slider-wrap > .range-label-row > label { font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap; letter-spacing: .3px; }
-.range-display { font-size: 11px; color: #1e3a5f; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.dual-range { position: relative; width: 100%; height: 20px; margin-top: 2px; }
-.dual-range .track { position: absolute; top: 8px; left: 0; right: 0; height: 4px; background: #e2e8f0; border-radius: 2px; z-index: 1; }
-.dual-range .fill { position: absolute; top: 8px; height: 4px; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 2px; z-index: 2; }
+.range-slider-wrap:first-child { border-left: none; padding-left: 6px; }
+.range-slider-wrap:last-child { padding-right: 6px; }
+
+/* 每列左侧彩色标识条 */
+.range-slider-wrap::before {
+  content: ''; position: absolute; left: 0; top: 4px; bottom: 4px;
+  width: 3px; border-radius: 2px;
+}
+.range-slider-wrap:first-child::before { left: 0; }
+.range-slider-wrap.range-blue::before   { background: linear-gradient(180deg, #3b82f6, #60a5fa); }
+.range-slider-wrap.range-green::before  { background: linear-gradient(180deg, #10b981, #34d399); }
+.range-slider-wrap.range-orange::before { background: linear-gradient(180deg, #f59e0b, #fbbf24); }
+.range-slider-wrap.range-purple::before { background: linear-gradient(180deg, #8b5cf6, #a78bfa); }
+.range-slider-wrap.range-red::before    { background: linear-gradient(180deg, #ef4444, #f87171); }
+
+/* 标签行：标签 + badge式范围值 */
+.range-label-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.range-slider-wrap .rl-label { font-size: 10px; font-weight: 600; white-space: nowrap; letter-spacing: .3px; }
+.range-slider-wrap.range-blue .rl-label   { color: #2563eb; }
+.range-slider-wrap.range-green .rl-label  { color: #059669; }
+.range-slider-wrap.range-orange .rl-label { color: #d97706; }
+.range-slider-wrap.range-purple .rl-label { color: #7c3aed; }
+.range-slider-wrap.range-red .rl-label    { color: #dc2626; }
+
+.range-display {
+  font-size: 10px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums;
+  padding: 1px 7px; border-radius: 10px; letter-spacing: .2px;
+}
+.range-slider-wrap.range-blue .range-display   { color: #1e40af; background: #dbeafe; }
+.range-slider-wrap.range-green .range-display  { color: #065f46; background: #d1fae5; }
+.range-slider-wrap.range-orange .range-display { color: #92400e; background: #fef3c7; }
+.range-slider-wrap.range-purple .range-display { color: #5b21b6; background: #ede9fe; }
+.range-slider-wrap.range-red .range-display    { color: #991b1b; background: #fee2e2; }
+
+.dual-range { position: relative; width: 100%; height: 20px; margin-top: 1px; }
+.dual-range .track { position: absolute; top: 8px; left: 0; right: 0; height: 4px; background: #f1f5f9; border-radius: 2px; z-index: 1; }
+.dual-range .fill { position: absolute; top: 8px; height: 4px; border-radius: 2px; z-index: 2; }
+.range-slider-wrap.range-blue .dual-range .fill   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.range-slider-wrap.range-green .dual-range .fill  { background: linear-gradient(90deg, #10b981, #34d399); }
+.range-slider-wrap.range-orange .dual-range .fill { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.range-slider-wrap.range-purple .dual-range .fill { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.range-slider-wrap.range-red .dual-range .fill    { background: linear-gradient(90deg, #ef4444, #f87171); }
+
 .dual-range input[type="range"] {
   position: absolute; top: 0; left: 0; width: 100%; height: 20px;
   -webkit-appearance: none; appearance: none; background: transparent;
@@ -275,15 +312,21 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .dual-range input[type="range"].range-max { z-index: 4; }
 .dual-range input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none; pointer-events: auto;
-  width: 14px; height: 14px; border-radius: 50%;
-  background: #fff; cursor: grab; border: 2.5px solid #3b82f6;
-  box-shadow: 0 1px 4px rgba(59,130,246,.4);
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; cursor: grab; border: 2.5px solid #cbd5e1;
+  box-shadow: 0 1px 5px rgba(0,0,0,.15), 0 0 0 3px rgba(255,255,255,.8);
+  transition: transform .15s, border-color .15s;
 }
-.dual-range input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; background: #3b82f6; transform: scale(1.15); }
+.range-slider-wrap.range-blue input[type="range"]::-webkit-slider-thumb   { border-color: #3b82f6; }
+.range-slider-wrap.range-green input[type="range"]::-webkit-slider-thumb  { border-color: #10b981; }
+.range-slider-wrap.range-orange input[type="range"]::-webkit-slider-thumb { border-color: #f59e0b; }
+.range-slider-wrap.range-purple input[type="range"]::-webkit-slider-thumb { border-color: #8b5cf6; }
+.range-slider-wrap.range-red input[type="range"]::-webkit-slider-thumb    { border-color: #ef4444; }
+.dual-range input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.2); box-shadow: 0 2px 8px rgba(0,0,0,.2); }
 .dual-range input[type="range"]::-moz-range-thumb {
-  pointer-events: auto; width: 14px; height: 14px; border-radius: 50%;
-  background: #fff; cursor: grab; border: 2.5px solid #3b82f6;
-  box-shadow: 0 1px 4px rgba(59,130,246,.4);
+  pointer-events: auto; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; cursor: grab; border: 2.5px solid #cbd5e1;
+  box-shadow: 0 1px 5px rgba(0,0,0,.15), 0 0 0 3px rgba(255,255,255,.8);
 }
 .dual-range input[type="range"]::-webkit-slider-runnable-track { height: 4px; background: transparent; }
 
@@ -860,9 +903,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 </div>
 <!-- 拨杆范围筛选 — 单行5列 -->
 <div class="dealer-toolbar dealer-toolbar-range">
-  <div class="range-slider-wrap">
+  <div class="range-slider-wrap range-blue">
     <div class="range-label-row">
-      <label>订单</label>
+      <span class="rl-label">订单</span>
       <span class="range-display" id="dispOrder">0 ~ 1000</span>
     </div>
     <div class="dual-range">
@@ -871,9 +914,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
       <input type="range" class="range-max" id="rangeOrderMax" min="0" max="1000" value="1000" oninput="onRangeInput('Order')">
     </div>
   </div>
-  <div class="range-slider-wrap">
+  <div class="range-slider-wrap range-green">
     <div class="range-label-row">
-      <label>同城配</label>
+      <span class="rl-label">同城配</span>
       <span class="range-display" id="dispDelivery">0 ~ 1000</span>
     </div>
     <div class="dual-range">
@@ -882,9 +925,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
       <input type="range" class="range-max" id="rangeDeliveryMax" min="0" max="1000" value="1000" oninput="onRangeInput('Delivery')">
     </div>
   </div>
-  <div class="range-slider-wrap">
+  <div class="range-slider-wrap range-orange">
     <div class="range-label-row">
-      <label>开瓶</label>
+      <span class="rl-label">开瓶</span>
       <span class="range-display" id="dispScan">0 ~ 1000</span>
     </div>
     <div class="dual-range">
@@ -893,9 +936,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
       <input type="range" class="range-max" id="rangeScanMax" min="0" max="1000" value="1000" oninput="onRangeInput('Scan')">
     </div>
   </div>
-  <div class="range-slider-wrap">
+  <div class="range-slider-wrap range-purple">
     <div class="range-label-row">
-      <label>动销率</label>
+      <span class="rl-label">动销率</span>
       <span class="range-display" id="dispMove">0 ~ 100%</span>
     </div>
     <div class="dual-range">
@@ -904,9 +947,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
       <input type="range" class="range-max" id="rangeMoveMax" min="0" max="100" value="100" oninput="onRangeInput('Move')">
     </div>
   </div>
-  <div class="range-slider-wrap">
+  <div class="range-slider-wrap range-red">
     <div class="range-label-row">
-      <label>开瓶率</label>
+      <span class="rl-label">开瓶率</span>
       <span class="range-display" id="dispOpen">0 ~ 100%</span>
     </div>
     <div class="dual-range">
