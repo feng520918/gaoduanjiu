@@ -265,7 +265,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 
 /* 每列左侧彩色标识条 — 与滑条区域等高对齐 */
 .range-slider-wrap::before {
-  content: ''; position: absolute; left: 0; top: 18px; bottom: 2px;
+  content: ''; position: absolute; left: 0; top: 18px; bottom: 4px;
   width: 3px; border-radius: 2px;
 }
 .range-slider-wrap:first-child::before { left: 0; }
@@ -294,9 +294,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .range-slider-wrap.range-purple .range-display { color: #5b21b6; background: #ede9fe; }
 .range-slider-wrap.range-red .range-display    { color: #991b1b; background: #fee2e2; }
 
-.dual-range { position: relative; width: 100%; height: 16px; margin-top: 1px; }
-.dual-range .track { position: absolute; top: 6px; left: 0; right: 0; height: 4px; background: #f1f5f9; border-radius: 2px; z-index: 1; }
-.dual-range .fill { position: absolute; top: 6px; height: 4px; border-radius: 2px; z-index: 2; }
+.dual-range { position: relative; width: 100%; height: 18px; margin-top: 1px; }
+.dual-range .track { position: absolute; top: 7px; left: 0; right: 0; height: 4px; background: #f1f5f9; border-radius: 2px; z-index: 1; }
+.dual-range .fill { position: absolute; top: 7px; height: 4px; border-radius: 2px; z-index: 2; }
 .range-slider-wrap.range-blue .dual-range .fill   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
 .range-slider-wrap.range-green .dual-range .fill  { background: linear-gradient(90deg, #10b981, #34d399); }
 .range-slider-wrap.range-orange .dual-range .fill { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
@@ -304,7 +304,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .range-slider-wrap.range-red .dual-range .fill    { background: linear-gradient(90deg, #ef4444, #f87171); }
 
 .dual-range input[type="range"] {
-  position: absolute; top: 0; left: 0; width: 100%; height: 16px;
+  position: absolute; top: 0; left: 0; width: 100%; height: 18px;
   -webkit-appearance: none; appearance: none; background: transparent;
   pointer-events: none; margin: 0; padding: 0; outline: none;
 }
@@ -316,7 +316,6 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   background: #fff; cursor: grab; border: 2.5px solid #cbd5e1;
   box-shadow: 0 1px 5px rgba(0,0,0,.15), 0 0 0 3px rgba(255,255,255,.8);
   transition: transform .15s, border-color .15s;
-  margin-top: -2px;
 }
 .range-slider-wrap.range-blue input[type="range"]::-webkit-slider-thumb   { border-color: #3b82f6; }
 .range-slider-wrap.range-green input[type="range"]::-webkit-slider-thumb  { border-color: #10b981; }
@@ -328,7 +327,6 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   pointer-events: auto; width: 16px; height: 16px; border-radius: 50%;
   background: #fff; cursor: grab; border: 2.5px solid #cbd5e1;
   box-shadow: 0 1px 5px rgba(0,0,0,.15), 0 0 0 3px rgba(255,255,255,.8);
-  margin-top: -2px;
 }
 .dual-range input[type="range"]::-webkit-slider-runnable-track { height: 4px; background: transparent; }
 
@@ -409,6 +407,40 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .avg-combo .sep { color: #94a3b8; font-weight: 400; margin: 0 3px; font-size: 11px; }
 .avg-combo .avg-sum { color: #b45309; }
 .avg-combo b { color: #1e3a5f; font-weight: 700; margin-left: 2px; font-variant-numeric: tabular-nums; }
+
+/* 双栏统计行 — 每行两个信息，中间虚线分隔 */
+.stat-row-pair {
+  display: flex; gap: 0;
+  padding: 4px 10px; border-radius: 4px;
+  background: #f8fafc; border: 1px solid #e2e8f0;
+  min-height: 24px;
+}
+.stat-row-pair .stat-part {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 6px; flex: 1; min-width: 0;
+  padding-right: 10px;
+}
+.stat-row-pair .stat-part + .stat-part {
+  padding-left: 10px; padding-right: 0;
+  border-left: 1px dashed #e2e8f0;
+}
+.stat-row-pair .stat-part .sp-lbl {
+  font-size: 10px; color: #475569; font-weight: 600;
+  white-space: nowrap; display: flex; align-items: center; flex-shrink: 0;
+}
+.stat-row-pair .stat-part .sp-lbl::before {
+  content: ''; display: inline-block;
+  width: 3px; height: 10px; background: var(--bar-color, #3b82f6);
+  border-radius: 1.5px; margin-right: 5px;
+}
+.stat-row-pair .stat-part .sp-val {
+  font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums;
+  color: #1e3a5f; white-space: nowrap;
+}
+.stat-row-pair .stat-part .sp-val .tag { font-size: 9px; color: #94a3b8; font-weight: 500; }
+.stat-row-pair .stat-part .sp-val .sep { color: #94a3b8; font-weight: 400; margin: 0 2px; font-size: 10px; }
+.stat-row-pair .stat-part .sp-val .avg-sum { color: #b45309; }
+.stat-row-pair .stat-part .sp-val .avg-avg { color: #1e3a5f; }
 
 /* 经销商详情折线图 */
 .dealer-detail-chart { margin: 12px 0; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -1607,9 +1639,24 @@ function renderDealerTable() {
     var parts = [];
     orderKeys.forEach(function(k, i) {
       var v = stats[k] || 0;
-      if (v > 0) parts.push((labels ? labels[i] : k) + '<b>' + v + '家</b>');
+      if (v > 0) parts.push((labels ? labels[i] : k) + '<b>' + v + '</b>');
     });
     return parts.join('<span class="sep">/</span>') || '—';
+  }
+
+  // 辅助：双栏统计行（每行两个信息，中间虚线分隔）
+  function dualStatRow(leftLbl, leftVal, rightLbl, rightVal, barColor) {
+    var color = barColor || '#3b82f6';
+    return '<div class="stat-row-pair">' +
+      '<div class="stat-part">' +
+        '<span class="sp-lbl" style="--bar-color:' + color + '">' + leftLbl + '</span>' +
+        '<span class="sp-val">' + leftVal + '</span>' +
+      '</div>' +
+      '<div class="stat-part">' +
+        '<span class="sp-lbl" style="--bar-color:' + color + '">' + rightLbl + '</span>' +
+        '<span class="sp-val">' + rightVal + '</span>' +
+      '</div>' +
+    '</div>';
   }
 
   // 辅助：标准行（标签 + 数值块）
@@ -1639,17 +1686,21 @@ function renderDealerTable() {
     return statRow(lbl, html, barColor);
   }
 
-  // ========== 左侧：分类统计（3行，与右侧格式一致）==========
+  // ========== 左侧：分类统计（2行，与右侧格式一致）==========
   var leftHtml = '<div class="stats-panel-title">经销商分类统计</div>';
   leftHtml += '<div class="avg-items">';
-  // 第1行：总数
-  leftHtml += statRow('经销商总数', '<span class="avg-sum">' + total + ' 家</span>', '#3b82f6');
-  // 第2行：三级分类
-  leftHtml += statRow('三级分类', distStr(clsStats, ['白名单', '观察类', '风险预警']), '#3b82f6');
-  // 第3行：市场类型
-  leftHtml += statRow('市场类型', distStr(marketStats, ['孵化市场', '非孵化市场'], ['孵化', '非孵化']), '#3b82f6');
-  // 第4行：客户类型
-  leftHtml += statRow('客户类型', distStr(typeStats, ['团购', '专卖店', '名烟名酒', '商场', '普通']), '#3b82f6');
+  // 第1行：经销商总数 + 三级分类
+  leftHtml += dualStatRow(
+    '经销商总数', '<span class="avg-sum">' + total + ' 家</span>',
+    '三级分类', distStr(clsStats, ['白名单', '观察类', '风险预警']),
+    '#3b82f6'
+  );
+  // 第2行：市场类型 + 客户类型
+  leftHtml += dualStatRow(
+    '市场类型', distStr(marketStats, ['孵化市场', '非孵化市场'], ['孵化', '非孵化']),
+    '客户类型', distStr(typeStats, ['团购', '专卖店', '名烟名酒', '商场', '普通']),
+    '#3b82f6'
+  );
   leftHtml += '</div>';
   document.getElementById('statsLeft').innerHTML = leftHtml;
 
@@ -1675,10 +1726,14 @@ function renderDealerTable() {
 
   var rightHtml = '<div class="stats-panel-title">筛选客户指标</div>';
   rightHtml += '<div class="avg-items">';
-  rightHtml += comboRow('订单 (箱)', avgOrder, sumOrder.toLocaleString(), '箱', '#10b981');
-  rightHtml += comboRateRow('同城配 (箱)', avgDeliv, sumDeliv.toLocaleString(), '箱', '动销率', avgMoveR, '#10b981');
-  rightHtml += comboRateRow('消费者开瓶 (瓶)', avgConsOpen, sumConsOpen.toLocaleString(), '瓶', '开瓶率', avgOpenO, '#10b981');
-  rightHtml += comboRow('活动开瓶 (瓶)', avgActOpen, sumActOpen.toLocaleString(), '瓶', '#10b981');
+  // 第1行：订单 + 同城配（含动销率）
+  var orderVal = '<span class="tag">均</span><span class="avg-avg">' + avgOrder + '</span><span class="sep">/</span><span class="tag">总</span><span class="avg-sum">' + sumOrder.toLocaleString() + '</span><span class="tag">箱</span>';
+  var delivVal = '<span class="tag">均</span><span class="avg-avg">' + avgDeliv + '</span><span class="sep">/</span><span class="tag">总</span><span class="avg-sum">' + sumDeliv.toLocaleString() + '</span><span class="tag">箱</span><span class="sep" style="margin:0 3px">|</span><span class="tag">动销</span><span style="color:#1e3a5f;font-weight:700">' + avgMoveR + '%</span>';
+  rightHtml += dualStatRow('订单 (箱)', orderVal, '同城配 (箱)', delivVal, '#10b981');
+  // 第2行：消费者开瓶（含开瓶率）+ 活动开瓶
+  var consVal = '<span class="tag">均</span><span class="avg-avg">' + avgConsOpen + '</span><span class="sep">/</span><span class="tag">总</span><span class="avg-sum">' + sumConsOpen.toLocaleString() + '</span><span class="tag">瓶</span><span class="sep" style="margin:0 3px">|</span><span class="tag">开瓶</span><span style="color:#1e3a5f;font-weight:700">' + avgOpenO + '%</span>';
+  var actVal = '<span class="tag">均</span><span class="avg-avg">' + avgActOpen + '</span><span class="sep">/</span><span class="tag">总</span><span class="avg-sum">' + sumActOpen.toLocaleString() + '</span><span class="tag">瓶</span>';
+  rightHtml += dualStatRow('消费者开瓶 (瓶)', consVal, '活动开瓶 (瓶)', actVal, '#10b981');
   rightHtml += '</div>';
   document.getElementById('statsRight').innerHTML = rightHtml;
 
