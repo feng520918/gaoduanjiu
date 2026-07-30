@@ -2429,7 +2429,7 @@ function buildCustomerMgmtPanel(d) {
   var orderPolicy = '', policyColor = '';
   if (cls === '白名单') { orderPolicy = '正常下单 + 正常发货'; policyColor = '#16a34a'; }
   else if (cls === '观察类') { orderPolicy = '暂停下单'; policyColor = '#d97706'; }
-  else if (cls === '风险预警') { orderPolicy = '暂停下达'; policyColor = '#dc2626'; }
+  else if (cls === '风险预警') { orderPolicy = '暂停下单'; policyColor = '#dc2626'; }
   else { orderPolicy = '待分类'; policyColor = '#64748b'; }
   
   html += '<div class="cm-section">';
