@@ -586,6 +586,38 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .quota-pending-row .qp-bar-bg { flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
 .quota-pending-row .qp-bar-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #ef4444); border-radius: 4px; }
 .quota-pending-row .qp-pct { font-size: 11px; color: #64748b; min-width: 40px; text-align: right; }
+/* ===== 客户管理看板 ===== */
+.cust-mgmt-panel { padding: 4px 0; }
+.cm-section { margin-bottom: 14px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+.cm-section:last-child { margin-bottom: 0; }
+.cm-section h4 { margin: 0 0 8px; font-size: 13px; color: #1e3a5f; font-weight: 700; }
+/* ①订单/发货 */
+.cm-order-policy { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #fff; border-radius: 6px; border: 1px solid #e2e8f0; }
+.cm-class-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.cm-class-tag.tag-white { background: #dbeafe; color: #1e40af; }
+.cm-class-tag.tag-watch { background: #fef3c7; color: #92400e; }
+.cm-class-tag.tag-risk { background: #fee2e2; color: #991b1b; }
+.cm-class-tag.tag-unknown { background: #f1f5f9; color: #475569; }
+.cm-policy-text { font-size: 14px; font-weight: 700; }
+/* ②费用使用待定 */
+.cm-tbd { text-align: center; color: #94a3b8; font-size: 13px; padding: 16px 0; }
+/* ③客户升档评估表格 */
+.cm-upgrade-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0; }
+.cm-upgrade-table th { background: #1e3a5f; color: #fff; padding: 6px 4px; font-size: 11px; font-weight: 600; text-align: center; }
+.cm-upgrade-table td { padding: 6px 4px; text-align: center; border-top: 1px solid #e2e8f0; }
+.cm-upgrade-table td.cm-row-label { font-weight: 700; font-size: 12px; text-align: center; }
+.cm-meet { background: #dcfce7; color: #166534; font-weight: 600; }
+.cm-not-meet { background: #fee2e2; color: #991b1b; font-weight: 600; }
+.cm-pending { background: #f1f5f9; color: #64748b; font-size: 11px; }
+/* 升档结论 */
+.cm-upgrade-conclusion { margin-top: 8px; padding: 10px 12px; background: #ecfdf5; border-radius: 6px; border: 1px solid #86efac; }
+.cm-conclusion-text { font-size: 13px; color: #166534; margin-bottom: 4px; }
+.cm-conclusion-action { font-size: 12px; color: #15803d; }
+/* ④降档提示 */
+.cm-downgrade-warnings { display: flex; flex-direction: column; gap: 6px; }
+.cm-warning-item { padding: 6px 10px; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 4px; font-size: 12px; color: #92400e; }
+.cm-downgrade-conclusion { margin-top: 6px; padding: 8px 12px; background: #fef2f2; border-radius: 6px; border: 1px solid #fca5a5; font-size: 13px; color: #991b1b; }
+.cm-no-downgrade { padding: 8px 12px; background: #ecfdf5; border-radius: 6px; border: 1px solid #86efac; font-size: 12px; color: #166534; }
 /* 紧凑基本信息 */
 .dealer-detail-info { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
 .dealer-detail-info-item { display: flex; gap: 4px; align-items: baseline; padding: 4px 8px; background: #f8fafc; border-radius: 4px; border: 1px solid #e2e8f0; }
@@ -1906,6 +1938,7 @@ function showDealerDetail(idx) {
     '<h3>' + d['主公司名称'] + detailViolationMark + ' <span style="font-size:13px;color:#64748b;font-weight:400">(' + d['主公司编码'] + ')</span></h3>' +
     '<div class="detail-page-nav">' +
       '<button class="detail-page-btn active" id="detailPage1Btn" onclick="switchDetailPage(1)">动销详情</button>' +
+      '<button class="detail-page-btn" id="detailPage3Btn" onclick="switchDetailPage(3)">客户管理</button>' +
       '<button class="detail-page-btn" id="detailPage2Btn" onclick="switchDetailPage(2)">费用额度</button>' +
     '</div>' +
     '<div class="dealer-detail-close" onclick="closeDealerDetail()">×</div>' +
@@ -1968,6 +2001,11 @@ function showDealerDetail(idx) {
   html += '</div>';  // violation-chart end
   
   html += '</div>';  // detailPage1 end
+  
+  // ===== 第3页：客户管理 =====
+  html += '<div id="detailPage3" class="detail-page" style="display:none">';
+  html += buildCustomerMgmtPanel(d);
+  html += '</div>';  // detailPage3 end
   
   // ===== 第2页：经销商费用额度明细 =====
   html += '<div id="detailPage2" class="detail-page" style="display:none">';
@@ -2343,22 +2381,177 @@ function closeDealerDetail() {
 }
 
 function switchDetailPage(pageNum) {
-  var p1 = document.getElementById('detailPage1');
-  var p2 = document.getElementById('detailPage2');
-  var b1 = document.getElementById('detailPage1Btn');
-  var b2 = document.getElementById('detailPage2Btn');
-  if (!p1 || !p2) return;
-  if (pageNum === 1) {
-    p1.style.display = '';
-    p2.style.display = 'none';
-    if (b1) b1.classList.add('active');
-    if (b2) b2.classList.remove('active');
-  } else {
-    p1.style.display = 'none';
-    p2.style.display = '';
-    if (b1) b1.classList.remove('active');
-    if (b2) b2.classList.add('active');
+  var pages = [1, 2, 3];
+  for (var i = 0; i < pages.length; i++) {
+    var p = document.getElementById('detailPage' + pages[i]);
+    var b = document.getElementById('detailPage' + pages[i] + 'Btn');
+    if (!p) continue;
+    if (pages[i] === pageNum) {
+      p.style.display = '';
+      if (b) b.classList.add('active');
+    } else {
+      p.style.display = 'none';
+      if (b) b.classList.remove('active');
+    }
   }
+}
+
+function buildCustomerMgmtPanel(d) {
+  var cls = d['三级分类'] || '未分类';
+  var moveR = d['累计动销率'] || 0;
+  var openR = d['累计开瓶率_同城配'] || 0;
+  var oneYearAgo = new Date('2025-07-29');
+  
+  // 检查一年内违约查收
+  var hasRecentWy = false;
+  (d['一般违约查收'] || []).forEach(function(r) {
+    var dtStr = r['通知日期'];
+    if (!dtStr) { hasRecentWy = true; }
+    else { var dt = new Date(dtStr); if (!isNaN(dt.getTime()) && dt >= oneYearAgo) hasRecentWy = true; }
+  });
+  // 检查一年内客情造假
+  var hasRecentKq = false;
+  (d['客情造假'] || []).forEach(function(r) {
+    var dtStr = r['时间'];
+    if (!dtStr) { hasRecentKq = true; }
+    else { var dt = new Date(dtStr); if (!isNaN(dt.getTime()) && dt >= oneYearAgo) hasRecentKq = true; }
+  });
+  
+  // 分类标签样式
+  var clsTagClass = 'tag-unknown';
+  if (cls === '白名单') clsTagClass = 'tag-white';
+  else if (cls === '观察类') clsTagClass = 'tag-watch';
+  else if (cls === '风险预警') clsTagClass = 'tag-risk';
+  
+  var html = '<div class="cust-mgmt-panel">';
+  
+  // ===== ①订单/发货 =====
+  var orderPolicy = '', policyColor = '';
+  if (cls === '白名单') { orderPolicy = '正常下单 + 正常发货'; policyColor = '#16a34a'; }
+  else if (cls === '观察类') { orderPolicy = '暂停下单'; policyColor = '#d97706'; }
+  else if (cls === '风险预警') { orderPolicy = '暂停下达'; policyColor = '#dc2626'; }
+  else { orderPolicy = '待分类'; policyColor = '#64748b'; }
+  
+  html += '<div class="cm-section">';
+  html += '<h4>① 订单 / 发货</h4>';
+  html += '<div class="cm-order-policy">';
+  html += '<span class="cm-class-tag ' + clsTagClass + '">' + cls + '</span>';
+  html += '<span class="cm-policy-text" style="color:' + policyColor + '">' + orderPolicy + '</span>';
+  html += '</div>';
+  html += '</div>';
+  
+  // ===== ②费用使用 =====
+  html += '<div class="cm-section">';
+  html += '<h4>② 费用使用</h4>';
+  html += '<div class="cm-tbd">待定</div>';
+  html += '</div>';
+  
+  // ===== ③客户升档评估 =====
+  html += '<div class="cm-section">';
+  html += '<h4>③ 客户升档评估</h4>';
+  
+  // 表格
+  var wlWyOk = !hasRecentWy;
+  var wlKqOk = !hasRecentKq;
+  var wlDxOk = moveR >= 60;
+  var wlOpOk = openR >= 30;
+  var obWyOk = !hasRecentWy;
+  var obKqOk = !hasRecentKq;
+  var obDxOk = moveR >= 50;
+  var obOpOk = openR >= 20;
+  
+  html += '<table class="cm-upgrade-table">';
+  html += '<thead><tr>';
+  html += '<th>分类</th><th>无违约查收</th><th>无客情造假</th><th>无发票红冲</th><th>动销率</th><th>消费者开瓶率</th>';
+  html += '</tr></thead><tbody>';
+  
+  // 白名单行
+  html += '<tr>';
+  html += '<td class="cm-row-label"><span class="cm-class-tag tag-white">白名单</span></td>';
+  html += '<td class="' + (wlWyOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlWyOk ? '满足' : '不满足') + '</td>';
+  html += '<td class="' + (wlKqOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlKqOk ? '满足' : '不满足') + '</td>';
+  html += '<td class="cm-pending">以市场管理部认定为准</td>';
+  html += '<td class="' + (wlDxOk ? 'cm-meet' : 'cm-not-meet') + '">' + moveR + '%</td>';
+  html += '<td class="' + (wlOpOk ? 'cm-meet' : 'cm-not-meet') + '">' + openR + '%</td>';
+  html += '</tr>';
+  
+  // 观察类行
+  html += '<tr>';
+  html += '<td class="cm-row-label"><span class="cm-class-tag tag-watch">观察类</span></td>';
+  html += '<td class="' + (obWyOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obWyOk ? '满足' : '不满足') + '</td>';
+  html += '<td class="' + (obKqOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obKqOk ? '满足' : '不满足') + '</td>';
+  html += '<td class="cm-pending">以市场管理部认定为准</td>';
+  html += '<td class="' + (obDxOk ? 'cm-meet' : 'cm-not-meet') + '">' + moveR + '%</td>';
+  html += '<td class="' + (obOpOk ? 'cm-meet' : 'cm-not-meet') + '">' + openR + '%</td>';
+  html += '</tr>';
+  
+  html += '</tbody></table>';
+  
+  // 升档结论：无违约查收、无客情造假、动销率、消费者开瓶率均满足
+  var allMeetWL = wlWyOk && wlKqOk && wlDxOk && wlOpOk;
+  var allMeetOB = obWyOk && obKqOk && obDxOk && obOpOk;
+  
+  // 分类层级：白名单(3) > 观察类(2) > 风险预警(1) > 其他(0)
+  var clsLevel = {'白名单':3, '观察类':2, '风险预警':1};
+  var curLv = clsLevel[cls] || 0;
+  
+  if (allMeetWL || allMeetOB) {
+    var targetLv = allMeetWL ? 3 : 2;
+    var targetName = allMeetWL ? '白名单' : '观察类';
+    html += '<div class="cm-upgrade-conclusion">';
+    if (curLv >= targetLv) {
+      // 当前分级已满足标准，保持不变
+      html += '<div class="cm-conclusion-text">当前分级为<strong>' + cls + '</strong>，请继续保持。</div>';
+    } else {
+      // 当前分级低于目标，需要升级
+      html += '<div class="cm-conclusion-text">该客户当前分类为<strong>' + cls + '</strong>，当前已满足升级为<strong>' + targetName + '</strong>的条件。</div>';
+      html += '<div class="cm-conclusion-action">请发起OA表单<strong>"高端酒27-高端酒事业部常规事项申请"</strong>进行申请。</div>';
+    }
+    html += '</div>';
+  }
+  
+  html += '</div>';  // cm-section ③ end
+  
+  // ===== ④客户降档提示 =====
+  html += '<div class="cm-section">';
+  html += '<h4>④ 客户降档提示</h4>';
+  
+  var warnings = [];
+  var targetDowngrade = '';
+  
+  if (cls === '白名单') {
+    if (hasRecentWy) warnings.push('该客户涉及违约查收，请及时联系相关部门进行核对');
+    if (hasRecentKq) warnings.push('该客户涉及客情造假，请及时联系相关部门进行核对');
+    if (moveR < 60) warnings.push('请提升动销率至60%及以上');
+    if (openR < 30) warnings.push('请提升开瓶率至30%及以上');
+    targetDowngrade = '观察类';
+  } else if (cls === '观察类') {
+    if (hasRecentWy) warnings.push('该客户涉及违约查收，请及时联系相关部门进行核对');
+    if (hasRecentKq) warnings.push('该客户涉及客情造假，请及时联系相关部门进行核对');
+    if (moveR < 50) warnings.push('请提升动销率至50%及以上');
+    if (openR < 20) warnings.push('请提升开瓶率至20%及以上');
+    targetDowngrade = '风险预警类';
+  }
+  
+  if (warnings.length > 0) {
+    html += '<div class="cm-downgrade-warnings">';
+    warnings.forEach(function(w) {
+      html += '<div class="cm-warning-item">' + w + '</div>';
+    });
+    html += '<div class="cm-downgrade-conclusion">下阶段客户分类类型：<strong>' + targetDowngrade + '</strong></div>';
+    html += '</div>';
+  } else {
+    if (cls === '白名单' || cls === '观察类') {
+      html += '<div class="cm-no-downgrade">该客户当前满足' + cls + '标准，暂无降档风险。</div>';
+    } else {
+      html += '<div class="cm-no-downgrade">该客户当前分类为' + cls + '，暂无降档评估数据。</div>';
+    }
+  }
+  
+  html += '</div>';  // cm-section ④ end
+  
+  html += '</div>';  // cust-mgmt-panel end
+  return html;
 }
 
 function fmtWan(val) {
