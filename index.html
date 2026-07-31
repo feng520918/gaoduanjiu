@@ -2814,8 +2814,8 @@ function buildCustomerMgmtPanel(d) {
   html += '<td class="' + (wlWyOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlWyOk ? '满足' : '不满足') + '</td>';
   html += '<td class="' + (wlKqOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlKqOk ? '满足' : '不满足') + '</td>';
   html += '<td class="cm-pending">以市场管理部认定为准</td>';
-  html += '<td class="' + (wlDxOk ? 'cm-meet' : 'cm-not-meet') + '">' + moveR + '%</td>';
-  html += '<td class="' + (wlOpOk ? 'cm-meet' : 'cm-not-meet') + '">' + openR + '%</td>';
+  html += '<td class="' + (wlDxOk ? 'cm-meet' : 'cm-not-meet') + '" title="标准≥60%，当前' + moveR + '%">≥60%</td>';
+  html += '<td class="' + (wlOpOk ? 'cm-meet' : 'cm-not-meet') + '" title="标准≥30%，当前' + openR + '%">≥30%</td>';
   html += '</tr>';
   
   // 观察类行
@@ -2824,8 +2824,8 @@ function buildCustomerMgmtPanel(d) {
   html += '<td class="' + (obWyOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obWyOk ? '满足' : '不满足') + '</td>';
   html += '<td class="' + (obKqOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obKqOk ? '满足' : '不满足') + '</td>';
   html += '<td class="cm-pending">以市场管理部认定为准</td>';
-  html += '<td class="' + (obDxOk ? 'cm-meet' : 'cm-not-meet') + '">' + moveR + '%</td>';
-  html += '<td class="' + (obOpOk ? 'cm-meet' : 'cm-not-meet') + '">' + openR + '%</td>';
+  html += '<td class="' + (obDxOk ? 'cm-meet' : 'cm-not-meet') + '" title="标准≥50%，当前' + moveR + '%">≥50%</td>';
+  html += '<td class="' + (obOpOk ? 'cm-meet' : 'cm-not-meet') + '" title="标准≥20%，当前' + openR + '%">≥20%</td>';
   html += '</tr>';
   
   html += '</tbody></table>';
