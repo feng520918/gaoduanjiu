@@ -37,6 +37,7 @@ body {
 }
 .login-card .btn-login:hover { opacity: .9; }
 .login-card .login-error { color: #ef4444; font-size: 13px; margin-top: 12px; min-height: 20px; }
+.remember-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
 /* ===== 顶部用户栏 ===== */
 .user-bar {
   display: flex; align-items: center; gap: 12px; margin-left: auto;
@@ -879,6 +880,10 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
     <input type="text" id="loginUser" placeholder="请输入姓名" autocomplete="off">
     <label for="loginPass">密码</label>
     <input type="password" id="loginPass" placeholder="请输入密码">
+    <div class="remember-row">
+      <input type="checkbox" id="rememberPwd" style="width:auto;margin:0;cursor:pointer;">
+      <label for="rememberPwd" style="font-size:13px;color:#64748b;cursor:pointer;margin:0;font-weight:400;">记住密码</label>
+    </div>
     <button class="btn-login" onclick="doLogin()">登 录</button>
     <div class="login-error" id="loginError"></div>
   </div>
@@ -1324,10 +1329,14 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 // =====================================================================
 var STORAGE_KEY = 'dashboard_users';
 var SESSION_KEY = 'dashboard_login';
+var CRED_KEY = 'dashboard_credentials';
 var INITIAL_PWD = '12345';
 var ALLOWED_USERS = ['俸越','陈辉','张可','包维超','王敏','邓婷','佘进','侯强','李忱'];
 function loadUsers() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; } }
 function saveUsers(users) { localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
+function saveCredentials(u, p) { localStorage.setItem(CRED_KEY, JSON.stringify({u:u, p:p})); }
+function loadCredentials() { try { return JSON.parse(localStorage.getItem(CRED_KEY)) || null; } catch(e) { return null; } }
+function clearCredentials() { localStorage.removeItem(CRED_KEY); }
 function isAllowedUser(username) { return ALLOWED_USERS.indexOf(username) !== -1; }
 function isRegionAccount(username) {
   for (var i = 0; i < REGION_ACCOUNTS.length; i++) {
@@ -1372,6 +1381,12 @@ function doLogin() {
   if (!pass) { errEl.textContent = '请输入密码'; return; }
   if (!isAllowedUser(user) && !isRegionAccount(user)) { errEl.textContent = '该用户名不在授权范围内'; return; }
   if (pass !== getUserPwd(user)) { errEl.textContent = '密码错误，请重试'; return; }
+  // 记住密码
+  if (document.getElementById('rememberPwd').checked) {
+    saveCredentials(user, pass);
+  } else {
+    clearCredentials();
+  }
   setSessionUser(user);
   showPortal();
 }
@@ -1444,6 +1459,13 @@ function backToPortal() {
   document.getElementById('portal-page').style.display = 'flex';
 }
 (function initAuth() {
+  // 预填充记住的账号密码
+  var cred = loadCredentials();
+  if (cred && cred.u) {
+    document.getElementById('loginUser').value = cred.u;
+    document.getElementById('loginPass').value = cred.p || '';
+    document.getElementById('rememberPwd').checked = true;
+  }
   if (getSessionUser()) { showPortal(); }
   document.getElementById('loginPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
   document.getElementById('loginUser').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('loginPass').focus(); });
@@ -2105,6 +2127,15 @@ function renderDealerTable() {
       violationMark += ' <span style="color:#22c55e;font-size:14px;cursor:help" title="一年前违规：该经销商涉及客情造假或一般违约查收">&#9888;</span>';
     }
     
+    // 升档/降档标记
+    var statusMark = getDealerStatus(d);
+    var arrowMark = '';
+    if (statusMark.arrow === 'up') {
+      arrowMark = ' <span style="color:#16a34a;font-size:16px;font-weight:bold;cursor:help" title="满足升档条件">▲</span>';
+    } else if (statusMark.arrow === 'down') {
+      arrowMark = ' <span style="color:#dc2626;font-size:16px;font-weight:bold;cursor:help" title="存在降档风险">▼</span>';
+    }
+    
     // Single table row (33 columns: 序号 + 主公司名称 + 31 data columns)
     html += '<tr ondblclick="showDealerDetail(' + i + ')">' +
       '<td class="sticky-col-0">' + seq + '</td>' +
@@ -2112,7 +2143,7 @@ function renderDealerTable() {
       '<td>' + (d['区域'] || '-') + '</td>' +
       '<td>' + (d['客户类型'] || '-') + '</td>' +
       '<td>' + d['主公司编码'] + '</td>' +
-      '<td class="sticky-col-1" style="text-align:left" title="双击可查看经销商详情">' + d['主公司名称'] + violationMark + '</td>' +
+      '<td class="sticky-col-1" style="text-align:left" title="双击可查看经销商详情">' + d['主公司名称'] + violationMark + arrowMark + '</td>' +
       '<td class="' + attrClass + '">' + d['客户属性'] + '</td>' +
       '<td class="' + clsClass + '">' + (d['三级分类'] || '-') + '</td>' +
       '<td>' + (d['市场类型'] || '-') + '</td>' +
@@ -2692,26 +2723,41 @@ function switchDetailPage(pageNum) {
   }
 }
 
+// 统一的违规检查 + 升档/降档判断
+function getDealerStatus(d) {
+  var cls = d['三级分类'] || '';
+  var moveR = d['累计动销率'] || 0;
+  var openR = d['累计开瓶率_同城配'] || 0;
+  var oneYearAgo = new Date('2025-07-29');
+  var hasRecentWy = false, hasRecentKq = false;
+  (d['一般违约查收'] || []).forEach(function(r) {
+    var dtStr = r['通知日期'];
+    if (!dtStr) hasRecentWy = true;
+    else { var dt = new Date(dtStr); if (!isNaN(dt.getTime()) && dt >= oneYearAgo) hasRecentWy = true; }
+  });
+  (d['客情造假'] || []).forEach(function(r) {
+    var dtStr = r['时间'];
+    if (!dtStr) hasRecentKq = true;
+    else { var dt = new Date(dtStr); if (!isNaN(dt.getTime()) && dt >= oneYearAgo) hasRecentKq = true; }
+  });
+  var noWy = !hasRecentWy, noKq = !hasRecentKq;
+  var arrow = '';
+  // 升档（优先判断）
+  if (cls === '观察类' && noWy && noKq && moveR >= 60 && openR >= 30) arrow = 'up';
+  else if (cls === '风险预警' && noWy && noKq && moveR >= 50 && openR >= 20) arrow = 'up';
+  // 降档
+  else if (cls === '白名单' && (hasRecentWy || hasRecentKq || moveR < 60 || openR < 30)) arrow = 'down';
+  else if (cls === '观察类' && (hasRecentWy || hasRecentKq || moveR < 50 || openR < 20)) arrow = 'down';
+  return { hasRecentWy: hasRecentWy, hasRecentKq: hasRecentKq, arrow: arrow, cls: cls, moveR: moveR, openR: openR };
+}
+
 function buildCustomerMgmtPanel(d) {
   var cls = d['三级分类'] || '未分类';
   var moveR = d['累计动销率'] || 0;
   var openR = d['累计开瓶率_同城配'] || 0;
-  var oneYearAgo = new Date('2025-07-29');
-  
-  // 检查一年内违约查收
-  var hasRecentWy = false;
-  (d['一般违约查收'] || []).forEach(function(r) {
-    var dtStr = r['通知日期'];
-    if (!dtStr) { hasRecentWy = true; }
-    else { var dt = new Date(dtStr); if (!isNaN(dt.getTime()) && dt >= oneYearAgo) hasRecentWy = true; }
-  });
-  // 检查一年内客情造假
-  var hasRecentKq = false;
-  (d['客情造假'] || []).forEach(function(r) {
-    var dtStr = r['时间'];
-    if (!dtStr) { hasRecentKq = true; }
-    else { var dt = new Date(dtStr); if (!isNaN(dt.getTime()) && dt >= oneYearAgo) hasRecentKq = true; }
-  });
+  var status = getDealerStatus(d);
+  var hasRecentWy = status.hasRecentWy;
+  var hasRecentKq = status.hasRecentKq;
   
   // 分类标签样式
   var clsTagClass = 'tag-unknown';
