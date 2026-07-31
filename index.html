@@ -2741,13 +2741,14 @@ function getDealerStatus(d) {
     else { var dt = new Date(dtStr); if (!isNaN(dt.getTime()) && dt >= oneYearAgo) hasRecentKq = true; }
   });
   var noWy = !hasRecentWy, noKq = !hasRecentKq;
+  var orderBox = d['订单_箱'] || 0;
   var arrow = '';
   // 升档（优先判断）
   if (cls === '观察类' && noWy && noKq && moveR >= 60 && openR >= 30) arrow = 'up';
   else if (cls === '风险预警' && noWy && noKq && moveR >= 50 && openR >= 20) arrow = 'up';
-  // 降档
-  else if (cls === '白名单' && (hasRecentWy || hasRecentKq || moveR < 60 || openR < 30)) arrow = 'down';
-  else if (cls === '观察类' && (hasRecentWy || hasRecentKq || moveR < 50 || openR < 20)) arrow = 'down';
+  // 降档（累计订单≤50箱不体现降档符号）
+  else if (orderBox > 50 && cls === '白名单' && (hasRecentWy || hasRecentKq || moveR < 60 || openR < 30)) arrow = 'down';
+  else if (orderBox > 50 && cls === '观察类' && (hasRecentWy || hasRecentKq || moveR < 50 || openR < 20)) arrow = 'down';
   return { hasRecentWy: hasRecentWy, hasRecentKq: hasRecentKq, arrow: arrow, cls: cls, moveR: moveR, openR: openR };
 }
 
