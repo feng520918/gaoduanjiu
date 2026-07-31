@@ -624,6 +624,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .cm-suggestion-title { font-size: 12px; color: #9a3412; margin-bottom: 4px; }
 .cm-suggestion-item { padding: 3px 0 3px 12px; font-size: 12px; color: #c2410c; position: relative; }
 .cm-suggestion-item::before { content: '▸'; position: absolute; left: 0; }
+/* 备注说明 */
+.cm-remark { margin-top: 8px; padding: 8px 10px; background: #fffbeb; border-radius: 6px; border: 1px solid #fcd34d; }
+.cm-remark-line { font-size: 11px; color: #92400e; line-height: 1.6; }
 /* 紧凑基本信息 */
 .dealer-detail-info { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
 .dealer-detail-info-item { display: flex; gap: 4px; align-items: baseline; padding: 4px 8px; background: #f8fafc; border-radius: 4px; border: 1px solid #e2e8f0; }
@@ -804,6 +807,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   .cm-upgrade-suggestions { padding: 6px 8px; }
   .cm-suggestion-title { font-size: 10px; }
   .cm-suggestion-item { font-size: 10px; padding-left: 12px; }
+  .cm-remark { padding: 6px 8px; }
+  .cm-remark-line { font-size: 10px; }
   /* ——— 额度看板 ——— */
   .quota-summary-row { flex-wrap: wrap; gap: 6px; }
   .quota-summary-item { flex: 1 1 45%; min-width: 80px; padding: 8px 6px; }
@@ -859,6 +864,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   .cm-upgrade-table th, .cm-upgrade-table td { font-size: 8px; padding: 3px 2px; }
   .cm-conclusion-text { font-size: 10px; }
   .cm-suggestion-item { font-size: 9px; }
+  .cm-remark { padding: 5px 6px; }
+  .cm-remark-line { font-size: 9px; }
   /* 额度 */
   .quota-summary-item { flex: 1 1 100%; }
   .quota-chart-wrap canvas { max-height: 180px; }
@@ -2811,24 +2818,31 @@ function buildCustomerMgmtPanel(d) {
   // 白名单行
   html += '<tr>';
   html += '<td class="cm-row-label"><span class="cm-class-tag tag-white">白名单</span></td>';
-  html += '<td class="' + (wlWyOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlWyOk ? '满足' : '不满足') + '</td>';
-  html += '<td class="' + (wlKqOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlKqOk ? '满足' : '不满足') + '</td>';
+  html += '<td>' + (wlWyOk ? '满足' : '不满足') + '</td>';
+  html += '<td>' + (wlKqOk ? '满足' : '不满足') + '</td>';
   html += '<td class="cm-pending">以市场管理部认定为准</td>';
-  html += '<td class="' + (wlDxOk ? 'cm-meet' : 'cm-not-meet') + '" title="标准≥60%，当前' + moveR + '%">≥60%</td>';
-  html += '<td class="' + (wlOpOk ? 'cm-meet' : 'cm-not-meet') + '" title="标准≥30%，当前' + openR + '%">≥30%</td>';
+  html += '<td>≥60%' + (wlDxOk ? '（满足）' : '（不满足）') + '</td>';
+  html += '<td>≥30%' + (wlOpOk ? '（满足）' : '（不满足）') + '</td>';
   html += '</tr>';
   
   // 观察类行
   html += '<tr>';
   html += '<td class="cm-row-label"><span class="cm-class-tag tag-watch">观察类</span></td>';
-  html += '<td class="' + (obWyOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obWyOk ? '满足' : '不满足') + '</td>';
-  html += '<td class="' + (obKqOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obKqOk ? '满足' : '不满足') + '</td>';
+  html += '<td>' + (obWyOk ? '满足' : '不满足') + '</td>';
+  html += '<td>' + (obKqOk ? '满足' : '不满足') + '</td>';
   html += '<td class="cm-pending">以市场管理部认定为准</td>';
-  html += '<td class="' + (obDxOk ? 'cm-meet' : 'cm-not-meet') + '" title="标准≥50%，当前' + moveR + '%">≥50%</td>';
-  html += '<td class="' + (obOpOk ? 'cm-meet' : 'cm-not-meet') + '" title="标准≥20%，当前' + openR + '%">≥20%</td>';
+  html += '<td>≥50%' + (obDxOk ? '（满足）' : '（不满足）') + '</td>';
+  html += '<td>≥20%' + (obOpOk ? '（满足）' : '（不满足）') + '</td>';
   html += '</tr>';
   
   html += '</tbody></table>';
+  
+  // 备注说明
+  html += '<div class="cm-remark">';
+  html += '<div class="cm-remark-line">三类经销商动销率核算公式 = 同城配瓶数 / SAP订单瓶数 × 100%</div>';
+  html += '<div class="cm-remark-line">开瓶率 = 纯消费者本地开瓶数 / 同城配瓶数 × 100%</div>';
+  html += '<div class="cm-remark-line" style="margin-top:4px;color:#c2410c;font-weight:600;">请和区域市场做好三级客户动销与开瓶指标的平衡。</div>';
+  html += '</div>';
   
   // 升档结论：无违约查收、无客情造假、动销率、消费者开瓶率均满足
   var allMeetWL = wlWyOk && wlKqOk && wlDxOk && wlOpOk;
