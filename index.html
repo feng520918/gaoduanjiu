@@ -126,7 +126,72 @@ body {
   padding: 14px 24px; border-radius: 10px 10px 0 0;
   border-left: 4px solid #3b82f6; margin-top: 18px;
 }
+.section-title .title-sub { font-weight: 500; color: #64748b; font-size: 13px; margin-left: 4px; }
 .section-title:first-of-type { margin-top: 0; }
+
+/* ===== Tab2 经销商运营周期 — 彩色现代风格 ===== */
+.trend-filter-bar {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  padding: 12px 16px; margin-top: 0;
+  background: linear-gradient(90deg, #fdf4ff 0%, #f0f9ff 100%);
+  border-radius: 0 0 0 0; border-top: 0; border-bottom: 1px solid #e2e8f0;
+}
+.trend-filter-group {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 10px; background: #fff;
+  border-radius: 20px; border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.trend-filter-group.dealer-group { flex: 1 1 320px; min-width: 280px; }
+.trend-filter-group .filter-icon { font-size: 14px; }
+.trend-filter-group .filter-label { font-size: 12px; font-weight: 600; color: #64748b; }
+.trend-select {
+  border: none; background: transparent;
+  font-size: 12px; padding: 4px 6px; min-width: 90px;
+  color: #1e3a5f; font-weight: 600; outline: none;
+  cursor: pointer;
+}
+.trend-select-dealer { flex: 1; min-width: 200px; }
+
+.trend-dim-bar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+  padding: 10px 16px; background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+}
+.trend-dim-label {
+  font-size: 13px; font-weight: 700; color: #475569;
+  margin-right: 4px; white-space: nowrap;
+}
+.trend-dim-pills { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.dim-pill-group { display: inline-flex; align-items: center; gap: 2px; }
+.dim-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 14px;
+  font-size: 12px; cursor: pointer; user-select: none;
+  border: 1.5px solid transparent; transition: all 0.15s ease;
+  font-weight: 500;
+}
+.dim-pill input[type="checkbox"] {
+  width: 12px; height: 12px; margin: 0; cursor: pointer; accent-color: currentColor;
+}
+.dim-pill:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.pill-blue   { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+.pill-green  { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
+.pill-orange { background: #fff7ed; color: #ea580c; border-color: #fed7aa; }
+.pill-purple { background: #faf5ff; color: #7c3aed; border-color: #ddd6fe; }
+.pill-cyan   { background: #ecfeff; color: #0891b2; border-color: #a5f3fc; }
+.pill-red    { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+.trend-sub-select {
+  font-size: 11px; padding: 3px 8px;
+  border: 1px solid #cbd5e1; border-radius: 10px;
+  background: #fff; color: #475569; cursor: pointer;
+}
+
+.trend-chart-wrap {
+  background: #fff; padding: 16px;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
 .table-wrap {
   background: #fff; border-radius: 0 0 10px 10px; overflow-x: auto;
   box-shadow: 0 2px 8px rgba(0,0,0,.04); margin-bottom: 0;
@@ -588,42 +653,128 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .quota-pending-row .qp-bar-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #ef4444); border-radius: 4px; }
 .quota-pending-row .qp-pct { font-size: 11px; color: #64748b; min-width: 40px; text-align: right; }
 /* ===== 客户管理看板 ===== */
-.cust-mgmt-panel { padding: 4px 0; }
-.cm-section { margin-bottom: 14px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
-.cm-section:last-child { margin-bottom: 0; }
-.cm-section h4 { margin: 0 0 8px; font-size: 13px; color: #1e3a5f; font-weight: 700; }
-/* ①订单/发货 */
-.cm-order-policy { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #fff; border-radius: 6px; border: 1px solid #e2e8f0; }
-.cm-class-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.cust-mgmt-panel { display: flex; flex-direction: column; gap: 14px; }
+.cm-section {
+  border-radius: 12px; padding: 14px 16px;
+  background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid #e2e8f0;
+  position: relative; overflow: hidden;
+}
+.cm-section::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px;
+}
+.cm-section.cm-s1::before { background: linear-gradient(180deg, #3b82f6, #06b6d4); }
+.cm-section.cm-s2::before { background: linear-gradient(180deg, #8b5cf6, #ec4899); }
+.cm-section.cm-s3::before { background: linear-gradient(180deg, #10b981, #14b8a6); }
+.cm-section.cm-s4::before { background: linear-gradient(180deg, #f59e0b, #ef4444); }
+.cm-section h4 {
+  margin: 0 0 10px; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px; color: #1e293b;
+}
+.cm-section h4 .cm-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  font-size: 11px; color: #fff; font-weight: 700;
+}
+.cm-section.cm-s1 h4 .cm-num { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
+.cm-section.cm-s2 h4 .cm-num { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+.cm-section.cm-s3 h4 .cm-num { background: linear-gradient(135deg, #10b981, #14b8a6); }
+.cm-section.cm-s4 h4 .cm-num { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+/* ①订单/发货 - 横向卡片 */
+.cm-order-policy {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; background: linear-gradient(90deg, #eff6ff 0%, #f0f9ff 100%);
+  border-radius: 8px; border: 1px solid #bfdbfe;
+}
+.cm-class-tag {
+  display: inline-block; padding: 4px 12px; border-radius: 14px;
+  font-size: 12px; font-weight: 700;
+}
 .cm-class-tag.tag-white { background: #dbeafe; color: #1e40af; }
 .cm-class-tag.tag-watch { background: #fef3c7; color: #92400e; }
-.cm-class-tag.tag-risk { background: #fee2e2; color: #991b1b; }
+.cm-class-tag.tag-risk  { background: #fee2e2; color: #991b1b; }
 .cm-class-tag.tag-unknown { background: #f1f5f9; color: #475569; }
 .cm-policy-text { font-size: 14px; font-weight: 700; }
+.cm-policy-text .arrow { font-size: 16px; margin: 0 4px; }
 /* ②费用使用待定 */
-.cm-tbd { text-align: center; color: #94a3b8; font-size: 13px; padding: 16px 0; }
-/* ③客户升档评估表格 */
-.cm-upgrade-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0; }
-.cm-upgrade-table th { background: #1e3a5f; color: #fff; padding: 6px 4px; font-size: 11px; font-weight: 600; text-align: center; }
-.cm-upgrade-table td { padding: 6px 4px; text-align: center; border-top: 1px solid #e2e8f0; }
+.cm-tbd {
+  text-align: center; color: #94a3b8; font-size: 13px;
+  padding: 20px 0; background: #f8fafc; border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+}
+/* ③客户升档评估 - 紧凑卡片表格 */
+.cm-upgrade-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  font-size: 12px; background: #fff;
+  border-radius: 8px; overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+.cm-upgrade-table th {
+  background: linear-gradient(90deg, #f0fdf4, #ecfeff);
+  color: #065f46; padding: 8px 4px;
+  font-size: 11px; font-weight: 700; text-align: center;
+  border-bottom: 1.5px solid #86efac;
+}
+.cm-upgrade-table td {
+  padding: 8px 4px; text-align: center;
+  border-top: 1px solid #f1f5f9;
+}
 .cm-upgrade-table td.cm-row-label { font-weight: 700; font-size: 12px; text-align: center; }
-.cm-meet { background: #dcfce7; color: #166534; font-weight: 600; }
-.cm-not-meet { background: #fee2e2; color: #991b1b; font-weight: 600; }
+.cm-meet { color: #16a34a; font-weight: 700; }
+.cm-not-meet { color: #dc2626; font-weight: 700; }
 .cm-pending { background: #f1f5f9; color: #64748b; font-size: 11px; }
 /* 升档结论 */
-.cm-upgrade-conclusion { margin-top: 8px; padding: 10px 12px; background: #ecfdf5; border-radius: 6px; border: 1px solid #86efac; }
+.cm-upgrade-conclusion {
+  margin-top: 10px; padding: 12px 14px;
+  background: linear-gradient(90deg, #ecfdf5, #f0fdf4);
+  border-radius: 8px; border: 1px solid #86efac;
+  border-left: 4px solid #10b981;
+}
 .cm-conclusion-text { font-size: 13px; color: #166534; margin-bottom: 4px; }
 .cm-conclusion-action { font-size: 12px; color: #15803d; }
-/* ④降档提示 */
+.cm-conclusion-action strong { color: #047857; }
+/* ④降档提示 - 简洁列表 */
 .cm-downgrade-warnings { display: flex; flex-direction: column; gap: 6px; }
-.cm-warning-item { padding: 6px 10px; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 4px; font-size: 12px; color: #92400e; }
-.cm-downgrade-conclusion { margin-top: 6px; padding: 8px 12px; background: #fef2f2; border-radius: 6px; border: 1px solid #fca5a5; font-size: 13px; color: #991b1b; }
-.cm-no-downgrade { padding: 8px 12px; background: #ecfdf5; border-radius: 6px; border: 1px solid #86efac; font-size: 12px; color: #166534; }
+.cm-warning-item {
+  padding: 8px 12px;
+  background: linear-gradient(90deg, #fffbeb, #fef3c7);
+  border-left: 3px solid #f59e0b; border-radius: 6px;
+  font-size: 12px; color: #92400e;
+  display: flex; align-items: center; gap: 6px;
+}
+.cm-warning-item .warn-icon { color: #d97706; }
+.cm-downgrade-conclusion {
+  margin-top: 8px; padding: 10px 12px;
+  background: linear-gradient(90deg, #fef2f2, #fee2e2);
+  border-radius: 8px; border: 1px solid #fca5a5;
+  border-left: 4px solid #ef4444;
+  font-size: 13px; color: #991b1b; font-weight: 600;
+}
+.cm-no-downgrade {
+  padding: 12px; background: linear-gradient(90deg, #ecfdf5, #f0fdf4);
+  border-radius: 8px; border: 1px solid #86efac;
+  border-left: 4px solid #10b981;
+  font-size: 13px; color: #166534; font-weight: 500;
+  text-align: center;
+}
 /* 升档改进建议 */
-.cm-upgrade-suggestions { margin-top: 8px; padding: 10px 12px; background: #fff7ed; border-radius: 6px; border: 1px solid #fdba74; }
-.cm-suggestion-title { font-size: 12px; color: #9a3412; margin-bottom: 4px; }
-.cm-suggestion-item { padding: 3px 0 3px 12px; font-size: 12px; color: #c2410c; position: relative; }
-.cm-suggestion-item::before { content: '▸'; position: absolute; left: 0; }
+.cm-upgrade-suggestions {
+  margin-top: 10px; padding: 10px 14px;
+  background: linear-gradient(90deg, #fff7ed, #ffedd5);
+  border-radius: 8px; border: 1px solid #fdba74;
+  border-left: 4px solid #f97316;
+}
+.cm-suggestion-title {
+  font-size: 12px; color: #9a3412; margin-bottom: 6px; font-weight: 600;
+}
+.cm-suggestion-item {
+  padding: 3px 0 3px 14px; font-size: 12px; color: #c2410c;
+  position: relative; line-height: 1.5;
+}
+.cm-suggestion-item::before {
+  content: '▸'; position: absolute; left: 0; color: #ea580c;
+}
 /* 备注说明 */
 .cm-remark { margin-top: 8px; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; }
 .cm-remark-line { font-size: 11px; color: #64748b; line-height: 1.6; }
@@ -1300,46 +1451,61 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 
 <!-- ===== 经销商明细 板块2：经销商运营周期总览 ===== -->
 <div id="dealerTab2" style="display:none">
-  <div class="section-title">经销商运营周期总览 — 季度趋势对比</div>
-  
+  <div class="section-title">经销商运营周期总览 <span class="title-sub">— 季度趋势对比</span></div>
+
   <!-- 筛选器一：办事处 / 地级市 / 经销商 -->
-  <div class="dealer-toolbar" style="flex-wrap:wrap;gap:8px 16px;align-items:center">
-    <label>办事处：</label>
-    <select id="trendOffice" onchange="updateTrendDealerList()">
-      <option value="">全部</option>
-    </select>
-    <label>地级市：</label>
-    <select id="trendCity" onchange="updateTrendDealerList()">
-      <option value="">全部</option>
-    </select>
-    <label>经销商：</label>
-    <select id="trendDealer" onchange="updateTrendChart()" style="min-width:200px">
-      <option value="">请选择经销商</option>
-    </select>
+  <div class="trend-filter-bar">
+    <div class="trend-filter-group">
+      <span class="filter-icon">📍</span>
+      <span class="filter-label">办事处</span>
+      <select id="trendOffice" onchange="updateTrendDealerList()" class="trend-select">
+        <option value="">全部</option>
+      </select>
+    </div>
+    <div class="trend-filter-group">
+      <span class="filter-icon">🏙️</span>
+      <span class="filter-label">地级市</span>
+      <select id="trendCity" onchange="updateTrendDealerList()" class="trend-select">
+        <option value="">全部</option>
+      </select>
+    </div>
+    <div class="trend-filter-group dealer-group">
+      <span class="filter-icon">🏪</span>
+      <span class="filter-label">经销商</span>
+      <select id="trendDealer" onchange="updateTrendChart()" class="trend-select trend-select-dealer">
+        <option value="">请选择经销商</option>
+      </select>
+    </div>
   </div>
   
   <!-- 筛选器二：维度选择 + 费用细类筛选 -->
-  <div class="dealer-toolbar" style="flex-wrap:wrap;gap:6px 14px;align-items:center;margin-top:6px">
-    <label style="font-weight:600">展示维度：</label>
-    <label style="display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="dim-order" checked onchange="updateTrendChart()"> <span style="color:#3b82f6">订单(箱)</span></label>
-    <label style="display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="dim-delivery" checked onchange="updateTrendChart()"> <span style="color:#10b981">同城配(箱)</span></label>
-    <label style="display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="dim-scan" checked onchange="updateTrendChart()"> <span style="color:#f59e0b">扫码(瓶)</span></label>
-    <label style="display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="dim-fee-total" onchange="updateTrendChart()"> <span style="color:#8b5cf6">费用-全量(元)</span></label>
-    <label style="display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="dim-fee-act" onchange="onFeeActToggle()"> <span style="color:#06b6d4">费用-活动类型(元)</span></label>
-    <select id="trendFeeActType" onchange="updateTrendChart()" style="display:none;font-size:12px;padding:2px 6px;border:1px solid #cbd5e1;border-radius:4px">
-      <option value="">全部活动类型</option>
-    </select>
-    <label style="display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="dim-fee-type" onchange="onFeeTypeToggle()"> <span style="color:#ef4444">费用-费用类型(元)</span></label>
-    <select id="trendFeeTypeSel" onchange="updateTrendChart()" style="display:none;font-size:12px;padding:2px 6px;border:1px solid #cbd5e1;border-radius:4px">
-      <option value="">全部费用类型</option>
-      <option value="总部投放">总部投放</option>
-      <option value="随量计提">随量计提</option>
-    </select>
+  <div class="trend-dim-bar">
+    <span class="trend-dim-label">📊 展示维度</span>
+    <div class="trend-dim-pills">
+      <label class="dim-pill pill-blue"><input type="checkbox" id="dim-order" checked onchange="updateTrendChart()"> <span>订单(箱)</span></label>
+      <label class="dim-pill pill-green"><input type="checkbox" id="dim-delivery" checked onchange="updateTrendChart()"> <span>同城配(箱)</span></label>
+      <label class="dim-pill pill-orange"><input type="checkbox" id="dim-scan" checked onchange="updateTrendChart()"> <span>扫码(瓶)</span></label>
+      <label class="dim-pill pill-purple"><input type="checkbox" id="dim-fee-total" onchange="updateTrendChart()"> <span>费用-全量</span></label>
+      <div class="dim-pill-group">
+        <label class="dim-pill pill-cyan"><input type="checkbox" id="dim-fee-act" onchange="onFeeActToggle()"> <span>费用-活动类型</span></label>
+        <select id="trendFeeActType" onchange="updateTrendChart()" class="trend-sub-select" style="display:none">
+          <option value="">全部活动类型</option>
+        </select>
+      </div>
+      <div class="dim-pill-group">
+        <label class="dim-pill pill-red"><input type="checkbox" id="dim-fee-type" onchange="onFeeTypeToggle()"> <span>费用-费用类型</span></label>
+        <select id="trendFeeTypeSel" onchange="updateTrendChart()" class="trend-sub-select" style="display:none">
+          <option value="">全部费用类型</option>
+          <option value="总部投放">总部投放</option>
+          <option value="随量计提">随量计提</option>
+        </select>
+      </div>
+    </div>
   </div>
   
   <!-- 图表区域 -->
-  <div class="chart-area" style="margin-top:10px">
-    <div id="trend-chart" style="min-height:460px">
+  <div class="chart-area trend-chart-wrap" style="margin-top:14px">
+    <div id="trend-chart" style="min-height:480px">
       <div class="empty-note" style="background:transparent;padding:60px 0">
         <div style="font-size:48px;margin-bottom:12px;opacity:0.3">📈</div>
         <div style="font-size:16px;color:#94a3b8;font-weight:500">请选择经销商查看季度趋势</div>
@@ -1826,40 +1992,80 @@ function renderTextSummary() {
 var trendFiltersInitialized = false;
 
 function initTrendFilters() {
-  var offices = {}, cities = {};
+  var offices = {}, cityToOffice = {};
   DATA.dealers.forEach(function(d) {
     if (d['办事处']) offices[d['办事处']] = 1;
-    if (d['区域']) cities[d['区域']] = 1;
+    if (d['办事处'] && d['区域']) cityToOffice[d['区域']] = d['办事处'];
   });
   var oSel = document.getElementById('trendOffice');
-  var cSel = document.getElementById('trendCity');
   if (oSel) {
     Object.keys(offices).sort().forEach(function(o) {
       var opt = document.createElement('option'); opt.value = o; opt.textContent = o;
       oSel.appendChild(opt);
     });
   }
-  if (cSel) {
-    Object.keys(cities).sort().forEach(function(c) {
-      var opt = document.createElement('option'); opt.value = c; opt.textContent = c;
-      cSel.appendChild(opt);
-    });
-  }
-  updateTrendDealerList();
+  // 默认选择排名第一的经销商
+  updateTrendDealerList(function() {
+    var dSel = document.getElementById('trendDealer');
+    if (dSel && dSel.options.length > 1) {
+      // 找到排序为1的经销商
+      for (var i = 1; i < dSel.options.length; i++) {
+        var opt = dSel.options[i];
+        var dealer = DATA.dealers.find(function(d) { return d['主公司编码'] === opt.value; });
+        if (dealer && dealer['排序'] === 1) {
+          dSel.value = opt.value;
+          break;
+        }
+      }
+      // 如果没找到排序1的，选第一个
+      if (!dSel.value && dSel.options.length > 1) {
+        dSel.value = dSel.options[1].value;
+      }
+      updateTrendChart();
+    }
+  });
 }
 
-function updateTrendDealerList() {
+function updateTrendDealerList(afterFilter) {
   var oF = document.getElementById('trendOffice');
   var cF = document.getElementById('trendCity');
   var dSel = document.getElementById('trendDealer');
   if (!dSel) return;
   var oVal = oF ? oF.value : '';
   var cVal = cF ? cF.value : '';
+
+  // 级联筛选：先按办事处过滤可用城市，再按城市过滤经销商
+  var availableCities = {};
+  DATA.dealers.forEach(function(d) {
+    if (oVal && d['办事处'] !== oVal) return;
+    if (d['区域']) availableCities[d['区域']] = 1;
+  });
+
+  // 重建地级市下拉框（仅显示当前办事处下的城市）
+  if (cF) {
+    var prevCity = cVal;
+    cF.innerHTML = '<option value="">全部</option>';
+    Object.keys(availableCities).sort().forEach(function(c) {
+      var opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      cF.appendChild(opt);
+    });
+    // 尝试保留之前的城市选择（如果该城市属于当前办事处）
+    if (availableCities[prevCity]) {
+      cF.value = prevCity;
+    } else {
+      cF.value = '';
+      cVal = '';
+    }
+  }
+
+  // 筛选经销商
   var filtered = DATA.dealers.filter(function(d) {
     if (oVal && d['办事处'] !== oVal) return false;
     if (cVal && d['区域'] !== cVal) return false;
     return true;
   });
+
   dSel.innerHTML = '<option value="">请选择经销商</option>';
   filtered.forEach(function(d) {
     var opt = document.createElement('option');
@@ -1868,7 +2074,11 @@ function updateTrendDealerList() {
     dSel.appendChild(opt);
   });
   updateTrendFeeActTypes();
-  updateTrendChart();
+  if (afterFilter) {
+    afterFilter();
+  } else {
+    updateTrendChart();
+  }
 }
 
 function onFeeActToggle() {
@@ -2094,17 +2304,29 @@ function updateTrendChart() {
     return Math.round(v).toString();
   }
 
-  // Build SVG
-  var svg = '<div style="width:100%;overflow-x:auto"><svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;min-width:' + w + 'px;height:auto;background:#fafbfd;border-radius:8px" xmlns="http://www.w3.org/2000/svg">';
+  // 渐变背景 + 现代配色
+  var bgColors = ['#fef3c7','#dbeafe','#dcfce7','#fce7f3','#e0e7ff','#fed7aa','#ccfbf1','#f5d0fe'];
+  var svg = '<div style="width:100%;overflow-x:auto;background:linear-gradient(135deg,#fdf4ff 0%,#f0f9ff 50%,#fefce8 100%);border-radius:12px;padding:12px"><svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;min-width:' + w + 'px;height:auto;border-radius:8px" xmlns="http://www.w3.org/2000/svg">';
 
-  // Legend
+  // 渐变定义 - 给线条添加微妙渐变
+  svg += '<defs>';
+  series.forEach(function(s, idx) {
+    svg += '<linearGradient id="lineGrad' + idx + '" x1="0" y1="0" x2="1" y2="0">';
+    svg += '<stop offset="0%" stop-color="' + s.color + '" stop-opacity="0.4"/>';
+    svg += '<stop offset="50%" stop-color="' + s.color + '" stop-opacity="1"/>';
+    svg += '<stop offset="100%" stop-color="' + s.color + '" stop-opacity="0.4"/>';
+    svg += '</linearGradient>';
+  });
+  svg += '</defs>';
+
+  // 图例 - 紧凑样式
   var legendX = padL, legendY = 22, legendLineH = 20;
   series.forEach(function(s, i) {
     if (legendX > w - 140) { legendY += legendLineH; legendX = padL; }
-    svg += '<line x1="' + legendX + '" y1="' + legendY + '" x2="' + (legendX + 18) + '" y2="' + legendY + '" stroke="' + s.color + '" stroke-width="2.5"/>';
-    svg += '<circle cx="' + (legendX + 9) + '" cy="' + legendY + '" r="3.5" fill="' + s.color + '"/>';
-    svg += '<text x="' + (legendX + 24) + '" y="' + (legendY + 4) + '" font-size="12" fill="#475569">' + s.name + '</text>';
-    legendX += s.name.length * 8 + 48;
+    svg += '<rect x="' + legendX + '" y="' + (legendY - 6) + '" width="14" height="12" rx="2" fill="' + s.color + '" opacity="0.15"/>';
+    svg += '<line x1="' + (legendX + 2) + '" y1="' + legendY + '" x2="' + (legendX + 12) + '" y2="' + legendY + '" stroke="' + s.color + '" stroke-width="2"/>';
+    svg += '<text x="' + (legendX + 18) + '" y="' + (legendY + 4) + '" font-size="11" fill="#475569" font-weight="500">' + s.name + '</text>';
+    legendX += s.name.length * 8 + 44;
   });
 
   // Grid lines + left axis labels (箱)
@@ -2171,19 +2393,21 @@ function updateTrendChart() {
     }
   });
 
-  // Draw lines
-  series.forEach(function(s) {
+  // Draw lines - 纤细现代风
+  series.forEach(function(s, idx) {
     var yFn = getYFn(s.axis);
     var path = smoothPath(s.data, yFn);
     if (path) {
-      svg += '<path d="' + path + '" fill="none" stroke="' + s.color + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
-      // Data points + labels
+      svg += '<path d="' + path + '" fill="none" stroke="url(#lineGrad' + idx + ')" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>';
+      // Data points + labels - 小且淡
       s.data.forEach(function(v, i) {
         if (v > 0) {
           var px = xPos(i);
           var py = yFn(v);
-          svg += '<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="4" fill="#fff" stroke="' + s.color + '" stroke-width="2.5"/>';
-          svg += '<text x="' + px.toFixed(1) + '" y="' + (py - 12).toFixed(1) + '" text-anchor="middle" font-size="11" fill="' + s.color + '" font-weight="700">' + fmt(v) + '</text>';
+          // 小圆点
+          svg += '<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="2.5" fill="' + s.color + '" stroke="#fff" stroke-width="1.5"/>';
+          // 轻盈数据标签 - 半透明小号字
+          svg += '<text x="' + px.toFixed(1) + '" y="' + (py - 8).toFixed(1) + '" text-anchor="middle" font-size="9" fill="' + s.color + '" font-weight="500" opacity="0.75">' + fmt(v) + '</text>';
         }
       });
     }
@@ -3174,40 +3398,41 @@ function buildCustomerMgmtPanel(d) {
   var status = getDealerStatus(d);
   var hasRecentWy = status.hasRecentWy;
   var hasRecentKq = status.hasRecentKq;
-  
+
   // 分类标签样式
   var clsTagClass = 'tag-unknown';
   if (cls === '白名单') clsTagClass = 'tag-white';
   else if (cls === '观察类') clsTagClass = 'tag-watch';
   else if (cls === '风险预警') clsTagClass = 'tag-risk';
-  
+
   var html = '<div class="cust-mgmt-panel">';
-  
+
   // ===== ①订单/发货 =====
-  var orderPolicy = '', policyColor = '';
-  if (cls === '白名单') { orderPolicy = '正常下单 + 正常发货'; policyColor = '#16a34a'; }
-  else if (cls === '观察类') { orderPolicy = '暂停下单'; policyColor = '#d97706'; }
-  else if (cls === '风险预警') { orderPolicy = '暂停下单'; policyColor = '#dc2626'; }
-  else { orderPolicy = '待分类'; policyColor = '#64748b'; }
-  
-  html += '<div class="cm-section">';
-  html += '<h4>① 订单 / 发货</h4>';
+  var orderPolicy = '', policyColor = '', arrowIcon = '';
+  if (cls === '白名单') { orderPolicy = '正常下单 + 正常发货'; policyColor = '#16a34a'; arrowIcon = '✅'; }
+  else if (cls === '观察类') { orderPolicy = '暂停下单'; policyColor = '#d97706'; arrowIcon = '⚠️'; }
+  else if (cls === '风险预警') { orderPolicy = '暂停下单'; policyColor = '#dc2626'; arrowIcon = '🚫'; }
+  else { orderPolicy = '待分类'; policyColor = '#64748b'; arrowIcon = '❓'; }
+
+  html += '<div class="cm-section cm-s1">';
+  html += '<h4><span class="cm-num">1</span>订单 / 发货</h4>';
   html += '<div class="cm-order-policy">';
   html += '<span class="cm-class-tag ' + clsTagClass + '">' + cls + '</span>';
+  html += '<span class="arrow">' + arrowIcon + '</span>';
   html += '<span class="cm-policy-text" style="color:' + policyColor + '">' + orderPolicy + '</span>';
   html += '</div>';
   html += '</div>';
-  
+
   // ===== ②费用使用 =====
-  html += '<div class="cm-section">';
-  html += '<h4>② 费用使用</h4>';
-  html += '<div class="cm-tbd">待定</div>';
+  html += '<div class="cm-section cm-s2">';
+  html += '<h4><span class="cm-num">2</span>费用使用</h4>';
+  html += '<div class="cm-tbd">🚧 待规划中</div>';
   html += '</div>';
-  
+
   // ===== ③客户升档评估 =====
-  html += '<div class="cm-section">';
-  html += '<h4>③ 客户升档评估</h4>';
-  
+  html += '<div class="cm-section cm-s3">';
+  html += '<h4><span class="cm-num">3</span>客户升档评估</h4>';
+
   // 表格
   var wlWyOk = !hasRecentWy;
   var wlKqOk = !hasRecentKq;
@@ -3217,60 +3442,57 @@ function buildCustomerMgmtPanel(d) {
   var obKqOk = !hasRecentKq;
   var obDxOk = moveR >= 50;
   var obOpOk = openR >= 20;
-  
+
   html += '<table class="cm-upgrade-table">';
   html += '<thead><tr>';
-  html += '<th>分类</th><th>无违约查收</th><th>无客情造假</th><th>无发票红冲</th><th>动销率</th><th>消费者开瓶率</th>';
+  html += '<th>分类</th><th>无违约查收</th><th>无客情造假</th><th>动销率</th><th>消费者开瓶率</th>';
   html += '</tr></thead><tbody>';
-  
+
   // 白名单行
   html += '<tr>';
   html += '<td class="cm-row-label"><span class="cm-class-tag tag-white">白名单</span></td>';
-  html += '<td>' + (wlWyOk ? '满足' : '不满足') + '</td>';
-  html += '<td>' + (wlKqOk ? '满足' : '不满足') + '</td>';
-  html += '<td class="cm-pending">以市场管理部认定为准</td>';
-  html += '<td>≥60%' + (wlDxOk ? '（满足）' : '（不满足）') + '</td>';
-  html += '<td>≥30%' + (wlOpOk ? '（满足）' : '（不满足）') + '</td>';
+  html += '<td class="' + (wlWyOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlWyOk ? '✓ 满足' : '✗ 不满足') + '</td>';
+  html += '<td class="' + (wlKqOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlKqOk ? '✓ 满足' : '✗ 不满足') + '</td>';
+  html += '<td class="' + (wlDxOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlDxOk ? '✓ ' : '✗ ') + '≥60%</td>';
+  html += '<td class="' + (wlOpOk ? 'cm-meet' : 'cm-not-meet') + '">' + (wlOpOk ? '✓ ' : '✗ ') + '≥30%</td>';
   html += '</tr>';
-  
+
   // 观察类行
   html += '<tr>';
   html += '<td class="cm-row-label"><span class="cm-class-tag tag-watch">观察类</span></td>';
-  html += '<td>' + (obWyOk ? '满足' : '不满足') + '</td>';
-  html += '<td>' + (obKqOk ? '满足' : '不满足') + '</td>';
-  html += '<td class="cm-pending">以市场管理部认定为准</td>';
-  html += '<td>≥50%' + (obDxOk ? '（满足）' : '（不满足）') + '</td>';
-  html += '<td>≥20%' + (obOpOk ? '（满足）' : '（不满足）') + '</td>';
+  html += '<td class="' + (obWyOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obWyOk ? '✓ 满足' : '✗ 不满足') + '</td>';
+  html += '<td class="' + (obKqOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obKqOk ? '✓ 满足' : '✗ 不满足') + '</td>';
+  html += '<td class="' + (obDxOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obDxOk ? '✓ ' : '✗ ') + '≥50%</td>';
+  html += '<td class="' + (obOpOk ? 'cm-meet' : 'cm-not-meet') + '">' + (obOpOk ? '✓ ' : '✗ ') + '≥20%</td>';
   html += '</tr>';
-  
+
   html += '</tbody></table>';
-  
-  // 备注说明
-  html += '<div class="cm-remark">';
-  html += '<div class="cm-remark-line">三类经销商核算公式说明：请和区域市场做好三级客户动销与开瓶指标的平衡。</div>';
-  html += '<div class="cm-remark-line">1、动销率 = 同城配瓶数 / SAP订单瓶数（含赠酒计销量） × 100%</div>';
-  html += '<div class="cm-remark-line">2、开瓶率 = 纯消费者本地开瓶数 / 同城配瓶数 × 100%</div>';
-  html += '</div>';
-  
-  // 升档结论：无违约查收、无客情造假、动销率、消费者开瓶率均满足
+
+  // 公式说明 - 折叠式
+  html += '<details style="margin-top:8px">';
+  html += '<summary style="font-size:11px;color:#64748b;cursor:pointer;padding:4px 0">📐 公式说明</summary>';
+  html += '<div style="padding:6px 10px;background:#f8fafc;border-radius:6px;font-size:11px;color:#64748b;line-height:1.7">';
+  html += '动销率 = 同城配瓶数 ÷ SAP订单瓶数（含赠酒） × 100%<br>';
+  html += '开瓶率 = 纯消费者本地开瓶数 ÷ 同城配瓶数 × 100%';
+  html += '</div></details>';
+
+  // 升档结论
   var allMeetWL = wlWyOk && wlKqOk && wlDxOk && wlOpOk;
   var allMeetOB = obWyOk && obKqOk && obDxOk && obOpOk;
-  
+
   // 分类层级：白名单(3) > 观察类(2) > 风险预警(1) > 其他(0)
   var clsLevel = {'白名单':3, '观察类':2, '风险预警':1};
   var curLv = clsLevel[cls] || 0;
-  
+
   if (allMeetWL || allMeetOB) {
     var targetLv = allMeetWL ? 3 : 2;
     var targetName = allMeetWL ? '白名单' : '观察类';
     html += '<div class="cm-upgrade-conclusion">';
     if (curLv >= targetLv) {
-      // 当前分级已满足标准，保持不变
-      html += '<div class="cm-conclusion-text">当前分级为<strong>' + cls + '</strong>，请继续保持。</div>';
+      html += '<div class="cm-conclusion-text">🎉 当前分级为<strong>' + cls + '</strong>，请继续保持。</div>';
     } else {
-      // 当前分级低于目标，需要升级
-      html += '<div class="cm-conclusion-text">该客户当前分类为<strong>' + cls + '</strong>，当前已满足升级为<strong>' + targetName + '</strong>的条件。</div>';
-      html += '<div class="cm-conclusion-action">请发起OA表单<strong>"高端酒27-高端酒事业部常规事项申请"</strong>进行申请。</div>';
+      html += '<div class="cm-conclusion-text">✨ 当前分类<strong>' + cls + '</strong>，已满足升级为<strong>' + targetName + '</strong>的条件。</div>';
+      html += '<div class="cm-conclusion-action">📝 建议发起OA表单<strong>"高端酒27-高端酒事业部常规事项申请"</strong></div>';
     }
     html += '</div>';
   } else {
@@ -3284,57 +3506,59 @@ function buildCustomerMgmtPanel(d) {
     var suggestions = [];
     if (hasRecentWy) suggestions.push('需核实一般违约查收');
     if (hasRecentKq) suggestions.push('需核实客情造假');
-    if (moveR < suggMoveR) suggestions.push('需提升动销率至' + suggMoveR + '%及以上（当前' + moveR + '%）');
-    if (openR < suggOpenR) suggestions.push('需提升消费者开瓶率至' + suggOpenR + '%及以上（当前' + openR + '%）');
-    
-    html += '<div class="cm-upgrade-suggestions">';
-    html += '<div class="cm-suggestion-title">当前未满足升级为<strong>' + suggTarget + '</strong>的条件，需改进以下内容：</div>';
-    suggestions.forEach(function(s) {
-      html += '<div class="cm-suggestion-item">' + s + '</div>';
-    });
-    html += '</div>';
+    if (moveR < suggMoveR) suggestions.push('动销率需提升至' + suggMoveR + '%+（当前 ' + moveR + '%）');
+    if (openR < suggOpenR) suggestions.push('开瓶率需提升至' + suggOpenR + '%+（当前 ' + openR + '%）');
+
+    if (suggestions.length > 0) {
+      html += '<div class="cm-upgrade-suggestions">';
+      html += '<div class="cm-suggestion-title">💡 升级至<strong>' + suggTarget + '</strong>需改进：</div>';
+      suggestions.forEach(function(s) {
+        html += '<div class="cm-suggestion-item">' + s + '</div>';
+      });
+      html += '</div>';
+    }
   }
-  
+
   html += '</div>';  // cm-section ③ end
-  
+
   // ===== ④客户降档提示 =====
-  html += '<div class="cm-section">';
-  html += '<h4>④ 客户降档提示</h4>';
-  
+  html += '<div class="cm-section cm-s4">';
+  html += '<h4><span class="cm-num">4</span>客户降档提示</h4>';
+
   var warnings = [];
   var targetDowngrade = '';
-  
+
   if (cls === '白名单') {
-    if (hasRecentWy) warnings.push('该客户涉及违约查收，请及时联系相关部门进行核对');
-    if (hasRecentKq) warnings.push('该客户涉及客情造假，请及时联系相关部门进行核对');
-    if (moveR < 60) warnings.push('请提升动销率至60%及以上');
-    if (openR < 30) warnings.push('请提升开瓶率至30%及以上');
+    if (hasRecentWy) warnings.push('涉及违约查收，需核对');
+    if (hasRecentKq) warnings.push('涉及客情造假，需核对');
+    if (moveR < 60) warnings.push('动销率需提升至 ≥60%');
+    if (openR < 30) warnings.push('开瓶率需提升至 ≥30%');
     targetDowngrade = '观察类';
   } else if (cls === '观察类') {
-    if (hasRecentWy) warnings.push('该客户涉及违约查收，请及时联系相关部门进行核对');
-    if (hasRecentKq) warnings.push('该客户涉及客情造假，请及时联系相关部门进行核对');
-    if (moveR < 50) warnings.push('请提升动销率至50%及以上');
-    if (openR < 20) warnings.push('请提升开瓶率至20%及以上');
+    if (hasRecentWy) warnings.push('涉及违约查收，需核对');
+    if (hasRecentKq) warnings.push('涉及客情造假，需核对');
+    if (moveR < 50) warnings.push('动销率需提升至 ≥50%');
+    if (openR < 20) warnings.push('开瓶率需提升至 ≥20%');
     targetDowngrade = '风险预警类';
   }
-  
+
   if (warnings.length > 0) {
     html += '<div class="cm-downgrade-warnings">';
     warnings.forEach(function(w) {
-      html += '<div class="cm-warning-item">' + w + '</div>';
+      html += '<div class="cm-warning-item"><span class="warn-icon">⚠️</span>' + w + '</div>';
     });
-    html += '<div class="cm-downgrade-conclusion">下阶段客户分类类型：<strong>' + targetDowngrade + '</strong></div>';
+    html += '<div class="cm-downgrade-conclusion">📉 下阶段客户分类类型：<strong>' + targetDowngrade + '</strong></div>';
     html += '</div>';
   } else {
     if (cls === '白名单' || cls === '观察类') {
-      html += '<div class="cm-no-downgrade">该客户当前满足' + cls + '标准，暂无降档风险。</div>';
+      html += '<div class="cm-no-downgrade">✅ 该客户当前满足 ' + cls + ' 标准，暂无降档风险</div>';
     } else {
-      html += '<div class="cm-no-downgrade">该客户当前分类为' + cls + '，暂无降档评估数据。</div>';
+      html += '<div class="cm-no-downgrade">ℹ️ 该客户当前分类为 ' + cls + '，暂无降档评估数据</div>';
     }
   }
-  
+
   html += '</div>';  // cm-section ④ end
-  
+
   html += '</div>';  // cust-mgmt-panel end
   return html;
 }
