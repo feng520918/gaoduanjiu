@@ -192,6 +192,23 @@ body {
   border-radius: 0 0 10px 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
+
+/* ===== Tab2 重置按钮 ===== */
+.trend-reset-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 12px; border: 1px solid #fca5a5; background: #fff;
+  color: #ef4444; border-radius: 16px;
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all .15s ease;
+  margin-left: auto; align-self: center;
+}
+.trend-reset-btn:hover {
+  background: linear-gradient(90deg, #fef2f2, #fee2e2);
+  transform: translateY(-1px); box-shadow: 0 2px 6px rgba(239,68,68,.18);
+}
+.trend-dim-bar .trend-reset-btn.trend-reset-sm {
+  padding: 3px 10px; font-size: 10px;
+}
 .table-wrap {
   background: #fff; border-radius: 0 0 10px 10px; overflow-x: auto;
   box-shadow: 0 2px 8px rgba(0,0,0,.04); margin-bottom: 0;
@@ -406,6 +423,47 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   flex: 1; padding: 5px 8px; display: flex; flex-direction: column; gap: 3px;
   background: #fff; border-radius: 6px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
+  border: 1px solid #e2e8f0;
+}
+
+/* ===== 拨杆范围筛选 — 折叠面板 ===== */
+.range-folder { margin: 10px 0; }
+.range-folder > .range-folder-summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px;
+  background: linear-gradient(90deg, #f0f9ff 0%, #fdf4ff 60%, #fefce8 100%);
+  border: 1px solid #e2e8f0; border-radius: 10px;
+  font-size: 13px; color: #475569; font-weight: 600;
+  user-select: none;
+  transition: all .2s ease;
+  position: relative;
+}
+.range-folder > .range-folder-summary::-webkit-details-marker { display: none; }
+.range-folder > .range-folder-summary::before {
+  content: '▶'; display: inline-block;
+  transition: transform .25s ease;
+  font-size: 10px; color: #94a3b8;
+}
+.range-folder[open] > .range-folder-summary::before { transform: rotate(90deg); }
+.range-folder > .range-folder-summary:hover {
+  background: linear-gradient(90deg, #e0f2fe 0%, #fae8ff 60%, #fef9c3 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.range-folder .range-folder-icon { font-size: 16px; }
+.range-folder .range-folder-text { font-weight: 700; color: #1e3a5f; }
+.range-folder .range-folder-state { font-size: 11px; color: #94a3b8; margin-left: auto; font-weight: 500; }
+.range-folder > .range-folder-summary:hover .range-folder-state { color: #64748b; }
+.range-folder[open] > .range-folder-summary {
+  border-radius: 10px 10px 0 0;
+  border-bottom-color: transparent;
+}
+.range-folder > .dealer-toolbar-range {
+  margin-top: 0;
+  border-radius: 0 0 10px 10px;
+  border-top: 0;
+}
+
   border: 1px solid #e2e8f0;
 }
 .stats-panel-title {
@@ -1304,7 +1362,11 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   <label>搜索：</label>
   <input type="text" id="dealerSearch" placeholder="公司名称/编码" oninput="renderDealerTable()">
   <label>办事处：</label>
-  <select id="filterOffice" onchange="renderDealerTable()">
+  <select id="filterOffice" onchange="onFilterOfficeChange()" style="min-width:120px">
+    <option value="">全部</option>
+  </select>
+  <label>地级市：</label>
+  <select id="filterArea" onchange="renderDealerTable()" style="min-width:120px">
     <option value="">全部</option>
   </select>
   <label>客户类型：</label>
@@ -1332,64 +1394,71 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   <button class="btn-reset" onclick="resetDealerFilters()" title="重置所有筛选条件">↻ 重置</button>
   <span class="dealer-count" id="dealerCount"></span>
 </div>
-<!-- 拨杆范围筛选 — 单行5列 -->
-<div class="dealer-toolbar dealer-toolbar-range">
-  <div class="range-slider-wrap range-blue">
-    <div class="range-label-row">
-      <span class="rl-label">订单</span>
-      <span class="range-display" id="dispOrder">0 ~ 1000</span>
+<!-- 拨杆范围筛选 — 默认折叠 -->
+<details class="range-folder" id="rangeFolder">
+  <summary class="range-folder-summary">
+    <span class="range-folder-icon">🎚️</span>
+    <span class="range-folder-text">高级筛选（数值范围）</span>
+    <span class="range-folder-state">点击展开 / 收起</span>
+  </summary>
+  <div class="dealer-toolbar dealer-toolbar-range">
+    <div class="range-slider-wrap range-blue">
+      <div class="range-label-row">
+        <span class="rl-label">订单</span>
+        <span class="range-display" id="dispOrder">0 ~ 1000</span>
+      </div>
+      <div class="dual-range">
+        <div class="track"></div><div class="fill" id="fillOrder"></div>
+        <input type="range" class="range-min" id="rangeOrderMin" min="0" max="1000" value="0" oninput="onRangeInput('Order')">
+        <input type="range" class="range-max" id="rangeOrderMax" min="0" max="1000" value="1000" oninput="onRangeInput('Order')">
+      </div>
     </div>
-    <div class="dual-range">
-      <div class="track"></div><div class="fill" id="fillOrder"></div>
-      <input type="range" class="range-min" id="rangeOrderMin" min="0" max="1000" value="0" oninput="onRangeInput('Order')">
-      <input type="range" class="range-max" id="rangeOrderMax" min="0" max="1000" value="1000" oninput="onRangeInput('Order')">
+    <div class="range-slider-wrap range-green">
+      <div class="range-label-row">
+        <span class="rl-label">同城配</span>
+        <span class="range-display" id="dispDelivery">0 ~ 1000</span>
+      </div>
+      <div class="dual-range">
+        <div class="track"></div><div class="fill" id="fillDelivery"></div>
+        <input type="range" class="range-min" id="rangeDeliveryMin" min="0" max="1000" value="0" oninput="onRangeInput('Delivery')">
+        <input type="range" class="range-max" id="rangeDeliveryMax" min="0" max="1000" value="1000" oninput="onRangeInput('Delivery')">
+      </div>
+    </div>
+    <div class="range-slider-wrap range-orange">
+      <div class="range-label-row">
+        <span class="rl-label">开瓶</span>
+        <span class="range-display" id="dispScan">0 ~ 1000</span>
+      </div>
+      <div class="dual-range">
+        <div class="track"></div><div class="fill" id="fillScan"></div>
+        <input type="range" class="range-min" id="rangeScanMin" min="0" max="1000" value="0" oninput="onRangeInput('Scan')">
+        <input type="range" class="range-max" id="rangeScanMax" min="0" max="1000" value="1000" oninput="onRangeInput('Scan')">
+      </div>
+    </div>
+    <div class="range-slider-wrap range-purple">
+      <div class="range-label-row">
+        <span class="rl-label">动销率</span>
+        <span class="range-display" id="dispMove">0 ~ 100%</span>
+      </div>
+      <div class="dual-range">
+        <div class="track"></div><div class="fill" id="fillMove"></div>
+        <input type="range" class="range-min" id="rangeMoveMin" min="0" max="100" value="0" oninput="onRangeInput('Move')">
+        <input type="range" class="range-max" id="rangeMoveMax" min="0" max="100" value="100" oninput="onRangeInput('Move')">
+      </div>
+    </div>
+    <div class="range-slider-wrap range-red">
+      <div class="range-label-row">
+        <span class="rl-label">开瓶率</span>
+        <span class="range-display" id="dispOpen">0 ~ 100%</span>
+      </div>
+      <div class="dual-range">
+        <div class="track"></div><div class="fill" id="fillOpen"></div>
+        <input type="range" class="range-min" id="rangeOpenMin" min="0" max="100" value="0" oninput="onRangeInput('Open')">
+        <input type="range" class="range-max" id="rangeOpenMax" min="0" max="100" value="100" oninput="onRangeInput('Open')">
+      </div>
     </div>
   </div>
-  <div class="range-slider-wrap range-green">
-    <div class="range-label-row">
-      <span class="rl-label">同城配</span>
-      <span class="range-display" id="dispDelivery">0 ~ 1000</span>
-    </div>
-    <div class="dual-range">
-      <div class="track"></div><div class="fill" id="fillDelivery"></div>
-      <input type="range" class="range-min" id="rangeDeliveryMin" min="0" max="1000" value="0" oninput="onRangeInput('Delivery')">
-      <input type="range" class="range-max" id="rangeDeliveryMax" min="0" max="1000" value="1000" oninput="onRangeInput('Delivery')">
-    </div>
-  </div>
-  <div class="range-slider-wrap range-orange">
-    <div class="range-label-row">
-      <span class="rl-label">开瓶</span>
-      <span class="range-display" id="dispScan">0 ~ 1000</span>
-    </div>
-    <div class="dual-range">
-      <div class="track"></div><div class="fill" id="fillScan"></div>
-      <input type="range" class="range-min" id="rangeScanMin" min="0" max="1000" value="0" oninput="onRangeInput('Scan')">
-      <input type="range" class="range-max" id="rangeScanMax" min="0" max="1000" value="1000" oninput="onRangeInput('Scan')">
-    </div>
-  </div>
-  <div class="range-slider-wrap range-purple">
-    <div class="range-label-row">
-      <span class="rl-label">动销率</span>
-      <span class="range-display" id="dispMove">0 ~ 100%</span>
-    </div>
-    <div class="dual-range">
-      <div class="track"></div><div class="fill" id="fillMove"></div>
-      <input type="range" class="range-min" id="rangeMoveMin" min="0" max="100" value="0" oninput="onRangeInput('Move')">
-      <input type="range" class="range-max" id="rangeMoveMax" min="0" max="100" value="100" oninput="onRangeInput('Move')">
-    </div>
-  </div>
-  <div class="range-slider-wrap range-red">
-    <div class="range-label-row">
-      <span class="rl-label">开瓶率</span>
-      <span class="range-display" id="dispOpen">0 ~ 100%</span>
-    </div>
-    <div class="dual-range">
-      <div class="track"></div><div class="fill" id="fillOpen"></div>
-      <input type="range" class="range-min" id="rangeOpenMin" min="0" max="100" value="0" oninput="onRangeInput('Open')">
-      <input type="range" class="range-max" id="rangeOpenMax" min="0" max="100" value="100" oninput="onRangeInput('Open')">
-    </div>
-  </div>
-</div>
+</details>
 <!-- 汇总区 — 左右对称 -->
 <div class="dealer-stats-bar" id="dealerStatsBar">
   <div class="stats-panel-left" id="statsLeft"></div>
@@ -1476,6 +1545,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
         <option value="">请选择经销商</option>
       </select>
     </div>
+    <button class="trend-reset-btn" onclick="resetTrendFilters()" title="重置筛选一">
+      <span style="font-size:13px">↻</span> 重置
+    </button>
   </div>
   
   <!-- 筛选器二：维度选择 + 费用细类筛选 -->
@@ -1501,6 +1573,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
         </select>
       </div>
     </div>
+    <button class="trend-reset-btn trend-reset-sm" onclick="resetTrendDims()" title="重置筛选二">
+      <span style="font-size:13px">↻</span> 重置
+    </button>
   </div>
   
   <!-- 图表区域 -->
@@ -2070,7 +2145,9 @@ function updateTrendDealerList(afterFilter) {
   filtered.forEach(function(d) {
     var opt = document.createElement('option');
     opt.value = d['主公司编码'];
-    opt.textContent = d['排序'] + '. ' + d['主公司名称'];
+    opt.textContent = d['主公司名称'];
+    opt.setAttribute('data-office', d['办事处'] || '');
+    opt.setAttribute('data-city', d['区域'] || '');
     dSel.appendChild(opt);
   });
   updateTrendFeeActTypes();
@@ -2095,6 +2172,45 @@ function onFeeTypeToggle() {
   var sel = document.getElementById('trendFeeTypeSel');
   if (!cb || !sel) return;
   sel.style.display = cb.checked ? '' : 'none';
+  updateTrendChart();
+}
+
+function resetTrendFilters() {
+  document.getElementById('trendOffice').value = '';
+  document.getElementById('trendCity').value = '';
+  document.getElementById('trendDealer').value = '';
+  updateTrendDealerList(function() {
+    // 默认选中排序1的经销商
+    var dSel = document.getElementById('trendDealer');
+    if (dSel && dSel.options.length > 1) {
+      for (var i = 1; i < dSel.options.length; i++) {
+        var opt = dSel.options[i];
+        var dealer = DATA.dealers.find(function(d) { return d['主公司编码'] === opt.value; });
+        if (dealer && dealer['排序'] === 1) {
+          dSel.value = opt.value;
+          break;
+        }
+      }
+      if (!dSel.value && dSel.options.length > 1) {
+        dSel.value = dSel.options[1].value;
+      }
+      updateTrendChart();
+    }
+  });
+}
+
+function resetTrendDims() {
+  document.getElementById('dim-order').checked = true;
+  document.getElementById('dim-delivery').checked = true;
+  document.getElementById('dim-scan').checked = true;
+  document.getElementById('dim-fee-total').checked = false;
+  document.getElementById('dim-fee-act').checked = false;
+  document.getElementById('dim-fee-type').checked = false;
+  // 同步下拉框状态
+  var actSel = document.getElementById('trendFeeActType');
+  if (actSel) { actSel.value = ''; actSel.style.display = 'none'; }
+  var typeSel = document.getElementById('trendFeeTypeSel');
+  if (typeSel) { typeSel.value = ''; typeSel.style.display = 'none'; }
   updateTrendChart();
 }
 
@@ -2436,6 +2552,17 @@ function initDealerTable() {
   var fo = document.getElementById('filterOffice');
   fo.innerHTML = '<option value="">全部</option>';
   Object.keys(offices).sort().forEach(function(k) { fo.innerHTML += '<option value="' + k + '">' + k + '</option>'; });
+  // 地级市（区域）— 不在init里构建，由 onFilterOfficeChange 维护
+  var fa2 = document.getElementById('filterArea');
+  if (fa2 && (fa2.options.length <= 1 || !fa2._initialized)) {
+    var allAreas = {};
+    DATA.dealers.forEach(function(d) { if (d['区域']) allAreas[d['区域']] = d['办事处']; });
+    fa2.innerHTML = '<option value="">全部</option>';
+    Object.keys(allAreas).sort().forEach(function(k) {
+      fa2.innerHTML += '<option value="' + k + '" data-office="' + (allAreas[k]||'') + '">' + k + '</option>';
+    });
+    fa2._initialized = true;
+  }
   var ft = document.getElementById('filterType');
   ft.innerHTML = '<option value="">全部</option>';
   Object.keys(types).sort().forEach(function(k) { ft.innerHTML += '<option value="' + k + '">' + k + '</option>'; });
@@ -2541,12 +2668,31 @@ function updateSliderMaxValues(dealerList) {
   setSliderMax('Scan', maxScan);
 }
 
+function onFilterOfficeChange() {
+  var fo = document.getElementById('filterOffice').value;
+  var fa = document.getElementById('filterArea');
+  if (!fa) return;
+  var prev = fa.value;
+  fa.innerHTML = '<option value="">全部</option>';
+  var allAreas = {};
+  DATA.dealers.forEach(function(d) { if (d['区域']) allAreas[d['区域']] = d['办事处']; });
+  Object.keys(allAreas).sort().forEach(function(k) {
+    if (fo && allAreas[k] !== fo) return;
+    fa.innerHTML += '<option value="' + k + '">' + k + '</option>';
+  });
+  // 保留之前的选择（如果属于当前办事处）
+  var valid = Array.from(fa.options).some(function(o) { return o.value === prev; });
+  fa.value = valid ? prev : '';
+  renderDealerTable();
+}
+
 function renderDealerTable() {
   var search = (document.getElementById('dealerSearch').value || '').toLowerCase();
   var fo = document.getElementById('filterOffice').value;
+  var fa = document.getElementById('filterArea').value;
   var ft = document.getElementById('filterType').value;
   var fc = document.getElementById('filterClass').value;
-  var fa = document.getElementById('filterAttr').value;
+  var faAttr = document.getElementById('filterAttr').value;
   var fm = document.getElementById('filterMarket').value;
   var fv = document.getElementById('filterViolation').value;
 
@@ -2559,9 +2705,10 @@ function renderDealerTable() {
       if (name.indexOf(search) < 0 && code.indexOf(search) < 0) return false;
     }
     if (fo && d['办事处'] !== fo) return false;
+    if (fa && d['区域'] !== fa) return false;
     if (ft && d['客户类型'] !== ft) return false;
     if (fc && d['三级分类'] !== fc) return false;
-    if (fa && d['客户属性'] !== fa) return false;
+    if (faAttr && d['客户属性'] !== faAttr) return false;
     if (fm && d['市场类型'] !== fm) return false;
     var hasViolation = (d['客情造假'] && d['客情造假'].length > 0) || (d['一般违约查收'] && d['一般违约查收'].length > 0);
     if (fv === '是' && !hasViolation) return false;
@@ -2825,7 +2972,23 @@ function dealerPage(p) {
 }
 
 function setQuickFilter(field, value) {
-  if (field === '办事处') document.getElementById('filterOffice').value = value;
+  if (field === '办事处') {
+    document.getElementById('filterOffice').value = value;
+    onFilterOfficeChange();
+    return;
+  }
+  if (field === '区域') {
+    // 找到该区域对应的办事处，先设办事处再建地级市
+    var dealerForArea = DATA.dealers.find(function(d) { return d['区域'] === value; });
+    if (dealerForArea) {
+      document.getElementById('filterOffice').value = dealerForArea['办事处'] || '';
+      onFilterOfficeChange();
+    }
+    document.getElementById('filterArea').value = value;
+    DEALER_PAGE = 1;
+    renderDealerTable();
+    return;
+  }
   if (field === '客户类型') document.getElementById('filterType').value = value;
   if (field === '三级分类') document.getElementById('filterClass').value = value;
   if (field === '客户属性') document.getElementById('filterAttr').value = value;
@@ -2837,6 +3000,8 @@ function setQuickFilter(field, value) {
 function resetDealerFilters() {
   document.getElementById('dealerSearch').value = '';
   document.getElementById('filterOffice').value = '';
+  // 重置区域下拉框（恢复全部地级市）
+  onFilterOfficeChange();
   document.getElementById('filterType').value = '';
   document.getElementById('filterClass').value = '';
   document.getElementById('filterAttr').value = '';
