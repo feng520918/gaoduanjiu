@@ -1,0 +1,5 @@
+# 备份文件与旧脚本，不参与网站部署
+index_original_v75.html
+push_log.txt
+deploy.py
+*.bat
