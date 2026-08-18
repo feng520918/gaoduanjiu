@@ -681,8 +681,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 /* 表格列折叠 */
 #dealer-table.folded .foldable-col { display: none; }
 .fold-toggle-col {
-  background: #f8fafc !important;
-  color: #64748b;
+  background: #f1f5f9 !important;
+  color: #1e3a5f;
   cursor: pointer;
   text-align: center;
   border-left: 1px dashed #cbd5e1;
@@ -693,13 +693,15 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 }
 .fold-toggle-col::after {
   content: '◀';
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  text-shadow: 0 0 0 transparent;
 }
 /* 折叠时：表头箭头隐藏，由 tbody 左侧贯穿式折叠条显示 ▶ */
 #dealer-table.folded .fold-toggle-col::after { content: ''; }
-.fold-toggle-col:hover { background: #e2e8f0 !important; color: #334155; }
-#dealer-table th.fold-toggle-col { background: #1e3a5f !important; color: #fff; }
-#dealer-table th.fold-toggle-col::after { color: #fff; }
+.fold-toggle-col:hover { background: #e2e8f0 !important; }
+#dealer-table th.fold-toggle-col { background: #f1f5f9 !important; color: #1e3a5f; }
+#dealer-table th.fold-toggle-col::after { color: #1e3a5f; }
 
 /* 折叠时贯穿表格高度的折叠条，箭头在表格 body 区域垂直居中 */
 .dealer-fold-strip {
@@ -707,8 +709,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   position: absolute;
   top: 0;
   bottom: 0;
-  background: #1e3a5f;
-  color: #fff;
+  background: #f1f5f9;
+  color: #1e3a5f;
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -716,8 +718,22 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   border-radius: 0;
   user-select: none;
   pointer-events: auto;
+  border-left: 1px dashed #cbd5e1;
 }
-.dealer-fold-strip::after { content: '▶'; font-size: 13px; }
+.dealer-fold-strip::after {
+  content: '▶';
+  font-size: 15px;
+  font-weight: 700;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+.dealer-fold-strip:hover { background: #e2e8f0; }
 #dealer-table.folded ~ .dealer-fold-strip { display: flex; }
 
 /* 经销商详情弹窗 *//* 经销商详情弹窗 */
