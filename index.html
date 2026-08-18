@@ -695,12 +695,30 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   content: '◀';
   font-size: 13px;
 }
-#dealer-table.folded .fold-toggle-col::after {
-  content: '▶';
-}
+/* 折叠时：表头箭头隐藏，由 tbody 左侧贯穿式折叠条显示 ▶ */
+#dealer-table.folded .fold-toggle-col::after { content: ''; }
 .fold-toggle-col:hover { background: #e2e8f0 !important; color: #334155; }
 #dealer-table th.fold-toggle-col { background: #1e3a5f !important; color: #fff; }
 #dealer-table th.fold-toggle-col::after { color: #fff; }
+
+/* 折叠时贯穿表格高度的折叠条，箭头在表格 body 区域垂直居中 */
+.dealer-fold-strip {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #1e3a5f;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 25;
+  border-radius: 0;
+  user-select: none;
+  pointer-events: auto;
+}
+.dealer-fold-strip::after { content: '▶'; font-size: 13px; }
+#dealer-table.folded ~ .dealer-fold-strip { display: flex; }
 
 /* 经销商详情弹窗 *//* 经销商详情弹窗 */
 .dealer-detail-mask {
@@ -720,9 +738,24 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .dealer-detail-close:hover { color: #1e3a5f; background: #f1f5f9; }
 /* 表格右侧经销商详情预览面板（折叠时占用右侧列空间） */
 .dealer-preview-flex { display: flex; gap: 16px; align-items: stretch; }
-.dealer-table-wrap { flex: 0 0 calc(50% - 8px); display: flex; flex-direction: column; }
-.dealer-table-container { flex: 1; max-height: none; }
+.dealer-table-wrap {
+  flex: 0 0 calc(50% - 8px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.dealer-table-container {
+  flex: 1 1 0;
+  max-height: none;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+}
 #dealer-table.folded { width: auto; min-width: auto; }
+.dealer-pagination {
+  flex-shrink: 0;
+  margin-top: 14px;
+}
 .dealer-preview-panel {
   flex: 0 0 calc(50% - 8px);
   background: #fff;
@@ -731,6 +764,14 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   padding: 20px 24px;
   min-height: 300px;
   min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.dealer-preview-content {
+  flex: 1 1 0;
+  overflow: auto;
+  min-height: 0;
 }
 .dealer-preview-hint {
   font-size: 12px;
@@ -1605,6 +1646,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
     </thead>
     <tbody id="tbody-dealer"></tbody>
     </table>
+    <div class="dealer-fold-strip" id="dealerFoldStrip" onclick="toggleDealerColumns()" title="展开/收起数据列"></div>
     </div>
     <div class="dealer-pagination" id="dealerPagination"></div>
   </div>
@@ -3803,6 +3845,18 @@ function renderDealerTable() {
     hideDealerPreview();
   }
 
+  // 重新定位折叠条并监听滚动/尺寸变化
+  setTimeout(positionDealerFoldStrip, 0);
+  var container = document.getElementById('dealerTableContainer');
+  if (container && !container._foldStripBound) {
+    container.addEventListener('scroll', positionDealerFoldStrip);
+    container._foldStripBound = true;
+  }
+  if (!window._foldStripResizeBound) {
+    window.addEventListener('resize', positionDealerFoldStrip);
+    window._foldStripResizeBound = true;
+  }
+
   var pgEl = document.getElementById('dealerPagination');
   pgEl.innerHTML = '';
   if (totalPages <= 1) return;
@@ -3930,6 +3984,7 @@ function toggleDealerColumns() {
     var pi = (DEALER_PREVIEW_INDEX >= 0 && DEALER_PREVIEW_INDEX < DEALER_FILTERED.length) ? DEALER_PREVIEW_INDEX : 0;
     renderDealerPreview(DEALER_FILTERED[pi], pi);
   }
+  setTimeout(positionDealerFoldStrip, 0);
 }
 
 // 渲染预览看板（复用详情弹窗的 buildDealerDetailHtml，prefix='prev'）
@@ -3948,14 +4003,17 @@ function renderDealerPreview(d, idx) {
     '<button class="pn-btn" onclick="previewDealerNav(1)" ' + (idx >= total - 1 ? 'disabled' : '') + ' title="下一个经销商">下一个 ▶</button>' +
     '</div>';
   content.innerHTML = navHtml + buildDealerDetailHtml(d, 'prev');
-  panel.style.display = '';
+  panel.style.display = 'flex';
   highlightDealerRow(idx);
+  // 显示看板后重新定位折叠条，确保左右高度对齐
+  setTimeout(positionDealerFoldStrip, 0);
 }
 
 function hideDealerPreview() {
   var panel = document.getElementById('dealerPreviewPanel');
   if (panel) panel.style.display = 'none';
   clearDealerRowHighlight();
+  setTimeout(positionDealerFoldStrip, 0);
 }
 
 // 左右切换经销商看板（dir=-1 上一个 / dir=1 下一个）
@@ -3979,6 +4037,22 @@ function highlightDealerRow(idx) {
 function clearDealerRowHighlight() {
   var rows = document.querySelectorAll('#tbody-dealer tr.dealer-row-active');
   for (var i = 0; i < rows.length; i++) rows[i].classList.remove('dealer-row-active');
+}
+
+// 定位折叠条：折叠时覆盖在 fold-toggle-col 列上，箭头在表格 body 区域垂直居中
+function positionDealerFoldStrip() {
+  var table = document.getElementById('dealer-table');
+  var strip = document.getElementById('dealerFoldStrip');
+  var th = table && table.querySelector('th.fold-toggle-col');
+  var container = document.getElementById('dealerTableContainer');
+  if (!table || !strip || !th || !container) return;
+  if (DEALER_COLUMNS_EXPANDED) {
+    strip.style.display = 'none';
+    return;
+  }
+  strip.style.display = 'flex';
+  strip.style.left = (th.offsetLeft - container.scrollLeft) + 'px';
+  strip.style.width = th.offsetWidth + 'px';
 }
 
 // 导出当前筛选后的经销商明细为 CSV（UTF-8 BOM，Excel 可直接打开）
