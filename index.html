@@ -217,9 +217,9 @@ body {
 .table-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 table { width: 100%; border-collapse: collapse; min-width: max-content; }
 thead th {
-  background: #334155; color: #fff; font-size: 12px; font-weight: 600;
+  background: #f1f5f9; color: #334155; font-size: 12px; font-weight: 600;
   padding: 10px 9px; text-align: center; white-space: nowrap;
-  border-right: 1px solid rgba(255,255,255,.12);
+  border-right: 1px solid #e2e8f0;
 }
 thead th:last-child { border-right: none; }
 tbody td {
@@ -642,7 +642,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   max-width: 55px;
 }
 #dealer-table th.sticky-col-0 {
-  background: #1e3a5f;
+  background: #f1f5f9;
   z-index: 15;
 }
 #dealer-table tbody tr:nth-child(even) td.sticky-col-0 { background: #f8fafc; }
@@ -662,12 +662,34 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   text-overflow: ellipsis;
 }
 #dealer-table th.sticky-col-1 {
-  background: #1e3a5f;
+  background: #f1f5f9;
   z-index: 15;
   text-align: center;
 }
 #dealer-table tbody tr:nth-child(even) td.sticky-col-1 { background: #f8fafc; }
 #dealer-table tbody tr:hover td.sticky-col-1 { background: #eef2ff; }
+
+/* 表格列折叠 */
+#dealer-table.folded .foldable-col { display: none; }
+.fold-toggle-col {
+  background: #f8fafc !important;
+  color: #64748b;
+  cursor: pointer;
+  text-align: center;
+  border-left: 1px dashed #cbd5e1;
+  user-select: none;
+  position: relative;
+  min-width: 36px;
+  max-width: 36px;
+}
+.fold-toggle-col::after {
+  content: '◀';
+  font-size: 13px;
+}
+#dealer-table.folded .fold-toggle-col::after {
+  content: '▶';
+}
+.fold-toggle-col:hover { background: #e2e8f0 !important; color: #334155; }
 
 /* 经销商详情弹窗 *//* 经销商详情弹窗 */
 .dealer-detail-mask {
@@ -685,6 +707,50 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .dealer-detail-header h3 { margin: 0; font-size: 16px; color: #1e3a5f; }
 .dealer-detail-close { font-size: 24px; cursor: pointer; color: #94a3b8; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 .dealer-detail-close:hover { color: #1e3a5f; background: #f1f5f9; }
+/* 表格下方经销商详情预览面板 */
+.dealer-preview-panel {
+  margin-top: 16px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  padding: 20px 24px;
+  min-height: 300px;
+}
+.dealer-preview-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+  text-align: right;
+}
+/* 预览看板：经销商切换导航 */
+.dealer-preview-nav {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.dealer-preview-nav .pn-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid #cbd5e1;
+  background: #fff; color: #1e3a5f; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.dealer-preview-nav .pn-btn:hover:not(:disabled) { background: #f1f5f9; border-color: #94a3b8; }
+.dealer-preview-nav .pn-btn:disabled { opacity: .38; cursor: default; }
+.dealer-preview-nav .pn-info {
+  flex: 1; text-align: center; font-size: 13px; color: #475569; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.dealer-preview-nav .pn-info b { color: #1e3a5f; font-size: 15px; }
+.dealer-preview-nav .pn-info .pn-code { color: #94a3b8; font-weight: 400; }
+/* 预览面板内的详情盒：去掉弹窗专属样式 */
+.dealer-preview-panel .dealer-detail-box {
+  max-width: none; max-height: none; overflow: visible;
+  box-shadow: none; padding: 0;
+}
+.dealer-preview-panel .dealer-detail-header { margin-bottom: 8px; }
+/* 表格当前看板行高亮 */
+#dealer-table tbody tr.dealer-row-active td { background: #dbeafe !important; }
+#dealer-table tbody tr.dealer-row-active td.sticky-col-0,
+#dealer-table tbody tr.dealer-row-active td.sticky-col-1 { background: #dbeafe !important; }
 /* 翻页导航 */
 .detail-page-nav { display: flex; gap: 4px; margin-left: 12px; }
 .detail-page-btn {
@@ -1484,44 +1550,49 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 <th rowspan="2" style="min-width:68px">客户属性</th>
 <th rowspan="2" style="min-width:68px">三级分类</th>
 <th rowspan="2" style="min-width:72px">市场类型</th>
-<th colspan="5">动销数量汇总</th>
-<th colspan="3">动销指标汇总</th>
-<th colspan="4">订单(箱) by 财年</th>
-<th colspan="4">同城配(箱) by 财年</th>
-<th colspan="4">（纯消费者）扫码(瓶) by 财年</th>
-<th colspan="4">活动扫码(瓶) by 财年</th>
+<th rowspan="2" class="fold-toggle-col" onclick="toggleDealerColumns()" title="展开/收起数据列"></th>
+<th colspan="5" class="foldable-col">动销数量汇总</th>
+<th colspan="3" class="foldable-col">动销指标汇总</th>
+<th colspan="4" class="foldable-col">订单(箱) by 财年</th>
+<th colspan="4" class="foldable-col">同城配(箱) by 财年</th>
+<th colspan="4" class="foldable-col">（纯消费者）扫码(瓶) by 财年</th>
+<th colspan="4" class="foldable-col">活动扫码(瓶) by 财年</th>
 </tr>
 <tr>
-<th style="min-width:65px">订单(箱)</th>
-<th style="min-width:65px">未发货(箱)</th>
-<th style="min-width:65px">同城配(箱)</th>
-<th style="min-width:80px">消费者开瓶(瓶)</th>
-<th style="min-width:70px">活动开瓶(瓶)</th>
-<th style="min-width:72px">累计动销率</th>
-<th style="min-width:100px">消费者累计开瓶率(同城配)</th>
-<th style="min-width:100px">消费者累计开瓶率(订单)</th>
-<th style="min-width:50px">2023</th>
-<th style="min-width:50px">2024</th>
-<th style="min-width:50px">2025</th>
-<th style="min-width:50px">2026</th>
-<th style="min-width:50px">2023</th>
-<th style="min-width:50px">2024</th>
-<th style="min-width:50px">2025</th>
-<th style="min-width:50px">2026</th>
-<th style="min-width:55px">2023</th>
-<th style="min-width:55px">2024</th>
-<th style="min-width:55px">2025</th>
-<th style="min-width:55px">2026</th>
-<th style="min-width:55px">2023</th>
-<th style="min-width:55px">2024</th>
-<th style="min-width:55px">2025</th>
-<th style="min-width:55px">2026</th>
+<th class="foldable-col" style="min-width:65px">订单(箱)</th>
+<th class="foldable-col" style="min-width:65px">未发货(箱)</th>
+<th class="foldable-col" style="min-width:65px">同城配(箱)</th>
+<th class="foldable-col" style="min-width:80px">消费者开瓶(瓶)</th>
+<th class="foldable-col" style="min-width:70px">活动开瓶(瓶)</th>
+<th class="foldable-col" style="min-width:72px">累计动销率</th>
+<th class="foldable-col" style="min-width:100px">消费者累计开瓶率(同城配)</th>
+<th class="foldable-col" style="min-width:100px">消费者累计开瓶率(订单)</th>
+<th class="foldable-col" style="min-width:50px">2023</th>
+<th class="foldable-col" style="min-width:50px">2024</th>
+<th class="foldable-col" style="min-width:50px">2025</th>
+<th class="foldable-col" style="min-width:50px">2026</th>
+<th class="foldable-col" style="min-width:50px">2023</th>
+<th class="foldable-col" style="min-width:50px">2024</th>
+<th class="foldable-col" style="min-width:50px">2025</th>
+<th class="foldable-col" style="min-width:50px">2026</th>
+<th class="foldable-col" style="min-width:55px">2023</th>
+<th class="foldable-col" style="min-width:55px">2024</th>
+<th class="foldable-col" style="min-width:55px">2025</th>
+<th class="foldable-col" style="min-width:55px">2026</th>
+<th class="foldable-col" style="min-width:55px">2023</th>
+<th class="foldable-col" style="min-width:55px">2024</th>
+<th class="foldable-col" style="min-width:55px">2025</th>
+<th class="foldable-col" style="min-width:55px">2026</th>
 </tr>
 </thead>
 <tbody id="tbody-dealer"></tbody>
 </table>
 </div>
 <div class="dealer-pagination" id="dealerPagination"></div>
+<div class="dealer-preview-panel" id="dealerPreviewPanel" style="display:none">
+  <div class="dealer-preview-hint">双击表格行可切换查看其他经销商详情</div>
+  <div class="dealer-preview-content" id="dealerPreviewContent"></div>
+</div>
 </div>
 </div>
 
@@ -3286,6 +3357,8 @@ function initPanel3(){
 var DEALER_PAGE = 1;
 var DEALER_PER_PAGE = 50;
 var DEALER_FILTERED = [];
+var DEALER_COLUMNS_EXPANDED = false;
+var DEALER_PREVIEW_INDEX = 0;
 function initDealerTable() {
   var dealers = getFilteredDealers();
   var offices = {}, types = {}, classes = {}, attrs = {}, markets = {};
@@ -3680,22 +3753,36 @@ function renderDealerTable() {
       '<td class="' + attrClass + '">' + d['客户属性'] + '</td>' +
       '<td class="' + clsClass + '">' + (d['三级分类'] || '-') + '</td>' +
       '<td>' + (d['市场类型'] || '-') + '</td>' +
-      '<td>' + d['订单_箱'] + '</td>' +
-      '<td>' + d['未发货_箱'] + '</td>' +
-      '<td>' + d['同城配_箱'] + '</td>' +
-      '<td>' + d['消费者开瓶_瓶'] + '</td>' +
-      '<td>' + d['活动开瓶_瓶'] + '</td>' +
-      '<td>' + d['累计动销率'] + '%</td>' +
-      '<td>' + d['累计开瓶率_同城配'] + '%</td>' +
-      '<td>' + d['累计开瓶率_订单'] + '%</td>' +
-      '<td>' + d['订单_2023'] + '</td><td>' + d['订单_2024'] + '</td><td>' + d['订单_2025'] + '</td><td>' + d['订单_2026'] + '</td>' +
-      '<td>' + d['同城配_2023'] + '</td><td>' + d['同城配_2024'] + '</td><td>' + d['同城配_2025'] + '</td><td>' + d['同城配_2026'] + '</td>' +
-      '<td>' + d['消费者扫码_2023'] + '</td><td>' + d['消费者扫码_2024'] + '</td><td>' + d['消费者扫码_2025'] + '</td><td>' + d['消费者扫码_2026'] + '</td>' +
-      '<td>' + d['活动扫码_2023'] + '</td><td>' + d['活动扫码_2024'] + '</td><td>' + d['活动扫码_2025'] + '</td><td>' + d['活动扫码_2026'] + '</td>' +
+      '<td class="fold-toggle-col" onclick="event.stopPropagation();toggleDealerColumns()" title="展开/收起数据列"></td>' +
+      '<td class="foldable-col">' + d['订单_箱'] + '</td>' +
+      '<td class="foldable-col">' + d['未发货_箱'] + '</td>' +
+      '<td class="foldable-col">' + d['同城配_箱'] + '</td>' +
+      '<td class="foldable-col">' + d['消费者开瓶_瓶'] + '</td>' +
+      '<td class="foldable-col">' + d['活动开瓶_瓶'] + '</td>' +
+      '<td class="foldable-col">' + d['累计动销率'] + '%</td>' +
+      '<td class="foldable-col">' + d['累计开瓶率_同城配'] + '%</td>' +
+      '<td class="foldable-col">' + d['累计开瓶率_订单'] + '%</td>' +
+      '<td class="foldable-col">' + d['订单_2023'] + '</td><td class="foldable-col">' + d['订单_2024'] + '</td><td class="foldable-col">' + d['订单_2025'] + '</td><td class="foldable-col">' + d['订单_2026'] + '</td>' +
+      '<td class="foldable-col">' + d['同城配_2023'] + '</td><td class="foldable-col">' + d['同城配_2024'] + '</td><td class="foldable-col">' + d['同城配_2025'] + '</td><td class="foldable-col">' + d['同城配_2026'] + '</td>' +
+      '<td class="foldable-col">' + d['消费者扫码_2023'] + '</td><td class="foldable-col">' + d['消费者扫码_2024'] + '</td><td class="foldable-col">' + d['消费者扫码_2025'] + '</td><td class="foldable-col">' + d['消费者扫码_2026'] + '</td>' +
+      '<td class="foldable-col">' + d['活动扫码_2023'] + '</td><td class="foldable-col">' + d['活动扫码_2024'] + '</td><td class="foldable-col">' + d['活动扫码_2025'] + '</td><td class="foldable-col">' + d['活动扫码_2026'] + '</td>' +
       '</tr>';
   }
   document.getElementById('tbody-dealer').innerHTML = html;
   document.getElementById('dealerCount').textContent = '共 ' + total + ' 条';
+
+  // 表格列折叠状态保持
+  var tbl = document.getElementById('dealer-table');
+  if (DEALER_COLUMNS_EXPANDED) tbl.classList.remove('folded');
+  else tbl.classList.add('folded');
+
+  // 折叠时渲染详情看板：默认排名靠前的经销商（DEALER_FILTERED[0]），筛选/翻页时保持当前选中的经销商
+  if (!DEALER_COLUMNS_EXPANDED && total > 0) {
+    var pi = (DEALER_PREVIEW_INDEX >= 0 && DEALER_PREVIEW_INDEX < total) ? DEALER_PREVIEW_INDEX : 0;
+    renderDealerPreview(DEALER_FILTERED[pi], pi);
+  } else {
+    hideDealerPreview();
+  }
 
   var pgEl = document.getElementById('dealerPagination');
   pgEl.innerHTML = '';
@@ -3781,7 +3868,17 @@ function resetDealerFilters() {
 function showDealerDetail(idx) {
   var d = DEALER_FILTERED[idx];
   if (!d) return;
-  
+  DEALER_PREVIEW_INDEX = idx;
+  if (!DEALER_COLUMNS_EXPANDED) {
+    // 折叠状态：看板展示在表格下方折叠区域，双击行更新看板
+    renderDealerPreview(d, idx);
+  } else {
+    // 展开状态：无折叠区域，保留弹窗看板
+    openDealerDetailModal(d);
+  }
+}
+
+function openDealerDetailModal(d) {
   var mask = document.getElementById('dealerDetailMask');
   if (!mask) {
     mask = document.createElement('div');
@@ -3789,15 +3886,93 @@ function showDealerDetail(idx) {
     mask.className = 'dealer-detail-mask';
     document.body.appendChild(mask);
   }
-  
-  // 1. 紧凑基本信息
+  mask.innerHTML = buildDealerDetailHtml(d, '');
+  mask.classList.add('active');
+
+  var escHandler = function(e) { if (e.key === 'Escape') closeDealerDetail(); };
+  mask._esc = escHandler;
+  document.addEventListener('keydown', escHandler);
+  mask.onclick = function(e) { if (e.target === mask) closeDealerDetail(); };
+}
+
+// =====================================================================
+// 折叠区域经销商详情看板（预览面板）
+// =====================================================================
+// 展开/收起数据列
+function toggleDealerColumns() {
+  DEALER_COLUMNS_EXPANDED = !DEALER_COLUMNS_EXPANDED;
+  var tbl = document.getElementById('dealer-table');
+  if (DEALER_COLUMNS_EXPANDED) {
+    tbl.classList.remove('folded');
+    hideDealerPreview();
+  } else {
+    tbl.classList.add('folded');
+    // 默认展示排名靠前的经销商（排序第一），若之前已选过则保持
+    var pi = (DEALER_PREVIEW_INDEX >= 0 && DEALER_PREVIEW_INDEX < DEALER_FILTERED.length) ? DEALER_PREVIEW_INDEX : 0;
+    renderDealerPreview(DEALER_FILTERED[pi], pi);
+  }
+}
+
+// 渲染预览看板（复用详情弹窗的 buildDealerDetailHtml，prefix='prev'）
+function renderDealerPreview(d, idx) {
+  if (!d) return;
+  DEALER_PREVIEW_INDEX = idx;
+  var panel = document.getElementById('dealerPreviewPanel');
+  var content = document.getElementById('dealerPreviewContent');
+  if (!panel || !content) return;
+  var total = DEALER_FILTERED.length;
+  var navHtml = '<div class="dealer-preview-nav">' +
+    '<button class="pn-btn" onclick="previewDealerNav(-1)" ' + (idx <= 0 ? 'disabled' : '') + ' title="上一个经销商">◀ 上一个</button>' +
+    '<div class="pn-info">排名 <b>' + (idx + 1) + '</b> / ' + total +
+    ' · ' + (d['主公司名称'] || '') +
+    ' <span class="pn-code">(' + (d['主公司编码'] || '') + ')</span></div>' +
+    '<button class="pn-btn" onclick="previewDealerNav(1)" ' + (idx >= total - 1 ? 'disabled' : '') + ' title="下一个经销商">下一个 ▶</button>' +
+    '</div>';
+  content.innerHTML = navHtml + buildDealerDetailHtml(d, 'prev');
+  panel.style.display = '';
+  highlightDealerRow(idx);
+}
+
+function hideDealerPreview() {
+  var panel = document.getElementById('dealerPreviewPanel');
+  if (panel) panel.style.display = 'none';
+  clearDealerRowHighlight();
+}
+
+// 左右切换经销商看板（dir=-1 上一个 / dir=1 下一个）
+function previewDealerNav(dir) {
+  var total = DEALER_FILTERED.length;
+  if (total === 0) return;
+  var ni = DEALER_PREVIEW_INDEX + dir;
+  if (ni < 0 || ni >= total) return; // 边界不可越界
+  renderDealerPreview(DEALER_FILTERED[ni], ni);
+}
+
+// 高亮表格中当前看板对应的行（仅当该行在当前页可见时）
+function highlightDealerRow(idx) {
+  clearDealerRowHighlight();
+  var start = (DEALER_PAGE - 1) * DEALER_PER_PAGE;
+  var rows = document.querySelectorAll('#tbody-dealer tr');
+  var ri = idx - start;
+  if (ri >= 0 && ri < rows.length) rows[ri].classList.add('dealer-row-active');
+}
+
+function clearDealerRowHighlight() {
+  var rows = document.querySelectorAll('#tbody-dealer tr.dealer-row-active');
+  for (var i = 0; i < rows.length; i++) rows[i].classList.remove('dealer-row-active');
+}
+
+// 生成经销商详情 HTML（复用于弹窗和下方预览面板）
+// prefix: 元素 id 前缀，用于区分弹窗和预览面板
+function buildDealerDetailHtml(d, prefix) {
+  prefix = prefix || '';
   var infoFields = [
     {l:'编码', k:'主公司编码'},{l:'名称', k:'主公司名称'},
     {l:'办事处', k:'办事处'},{l:'区域', k:'区域'},
     {l:'客户类型', k:'客户类型'},{l:'客户属性', k:'客户属性'},
     {l:'三级分类', k:'三级分类'},{l:'市场类型', k:'市场类型'}
   ];
-  
+
   var _hasV = ((d['客情造假'] && d['客情造假'].length > 0) || (d['一般违约查收'] && d['一般违约查收'].length > 0));
   var _oneYrAgo = new Date('2025-07-29');
   var _hasRecent = false, _hasOld = false;
@@ -3811,29 +3986,29 @@ function showDealerDetail(idx) {
   var detailViolationMark = '';
   if (_hasRecent) detailViolationMark += ' <span style="color:#ef4444;font-size:16px" title="一年内违规">&#9888;</span>';
   if (_hasOld) detailViolationMark += ' <span style="color:#22c55e;font-size:16px" title="一年前违规">&#9888;</span>';
+
+  var closeBtn = prefix ? '' : '<div class="dealer-detail-close" onclick="closeDealerDetail()">×</div>';
   var html = '<div class="dealer-detail-box">' +
     '<div class="dealer-detail-header">' +
     '<h3>' + d['主公司名称'] + detailViolationMark + ' <span style="font-size:13px;color:#64748b;font-weight:400">(' + d['主公司编码'] + ')</span></h3>' +
     '<div class="detail-page-nav">' +
-      '<button class="detail-page-btn active" id="detailPage1Btn" onclick="switchDetailPage(1)">动销详情</button>' +
-      '<button class="detail-page-btn" id="detailPage3Btn" onclick="switchDetailPage(3)">客户管理</button>' +
-      '<button class="detail-page-btn" id="detailPage2Btn" onclick="switchDetailPage(2)">费用额度</button>' +
+    '<button class="detail-page-btn active" id="' + prefix + 'detailPage1Btn" onclick="switchDetailPage(1,\'' + prefix + '\')">动销详情</button>' +
+    '<button class="detail-page-btn" id="' + prefix + 'detailPage3Btn" onclick="switchDetailPage(3,\'' + prefix + '\')">客户管理</button>' +
+    '<button class="detail-page-btn" id="' + prefix + 'detailPage2Btn" onclick="switchDetailPage(2,\'' + prefix + '\')">费用额度</button>' +
     '</div>' +
-    '<div class="dealer-detail-close" onclick="closeDealerDetail()">×</div>' +
+    closeBtn +
     '</div>';
-  
+
   // ===== 第1页：动销详情 =====
-  html += '<div id="detailPage1" class="detail-page">';
-  
-  // 基本信息 — 紧凑4列
+  html += '<div id="' + prefix + 'detailPage1" class="detail-page">';
+
   html += '<div class="dealer-detail-info">';
   infoFields.forEach(function(f) {
     var val = d[f.k] !== undefined && d[f.k] !== null ? d[f.k] : '-';
     html += '<div class="dealer-detail-info-item"><span class="i-lbl">' + f.l + '</span><span class="i-val">' + val + '</span></div>';
   });
   html += '</div>';
-  
-  // 2. 折线图 — 美观平滑，左右铺满
+
   html += '<div class="dealer-detail-chart">';
   html += '<h4>各财年动销趋势</h4>';
   html += '<div class="chart-legend">';
@@ -3844,8 +4019,7 @@ function showDealerDetail(idx) {
   html += '</div>';
   html += drawDealerTrendChart(d);
   html += '</div>';
-  
-  // 3. 图表下方汇总 — 9项(3行3列)
+
   var totalScan = (d['消费者开瓶_瓶'] || 0) + (d['活动开瓶_瓶'] || 0);
   var moveR = d['累计动销率'] || 0;
   var openR = Math.max(d['累计开瓶率_同城配'] || 0, d['累计开瓶率_订单'] || 0);
@@ -3861,8 +4035,7 @@ function showDealerDetail(idx) {
   html += summaryItem('动销率', moveR, '%');
   html += summaryItem('扫码率', openR, '%');
   html += '</div>';
-  
-  // 4. 客情造假 + 一般违约查收 气泡图
+
   var kqList = d['客情造假'] || [];
   var wyList = d['一般违约查收'] || [];
   html += '<div class="violation-chart">';
@@ -3876,28 +4049,22 @@ function showDealerDetail(idx) {
     html += '</div>';
     html += drawViolationBubbleChart(d);
   }
-  html += '</div>';  // violation-chart end
-  
+  html += '</div>';
+
   html += '</div>';  // detailPage1 end
-  
+
   // ===== 第3页：客户管理 =====
-  html += '<div id="detailPage3" class="detail-page" style="display:none">';
+  html += '<div id="' + prefix + 'detailPage3" class="detail-page" style="display:none">';
   html += buildCustomerMgmtPanel(d);
-  html += '</div>';  // detailPage3 end
-  
+  html += '</div>';
+
   // ===== 第2页：经销商费用额度明细 =====
-  html += '<div id="detailPage2" class="detail-page" style="display:none">';
+  html += '<div id="' + prefix + 'detailPage2" class="detail-page" style="display:none">';
   html += buildQuotaPanel(d);
-  html += '</div>';  // detailPage2 end
-  
+  html += '</div>';
+
   html += '</div>';  // dealer-detail-box end
-  mask.innerHTML = html;
-  mask.classList.add('active');
-  
-  var escHandler = function(e) { if (e.key === 'Escape') closeDealerDetail(); };
-  mask._esc = escHandler;
-  document.addEventListener('keydown', escHandler);
-  mask.onclick = function(e) { if (e.target === mask) closeDealerDetail(); };
+  return html;
 }
 
 function summaryItem(lbl, val, unit) {
@@ -4258,11 +4425,12 @@ function closeDealerDetail() {
   if (tt) tt.style.display = 'none';
 }
 
-function switchDetailPage(pageNum) {
+function switchDetailPage(pageNum, containerPrefix) {
+  containerPrefix = containerPrefix || '';
   var pages = [1, 2, 3];
   for (var i = 0; i < pages.length; i++) {
-    var p = document.getElementById('detailPage' + pages[i]);
-    var b = document.getElementById('detailPage' + pages[i] + 'Btn');
+    var p = document.getElementById(containerPrefix + 'detailPage' + pages[i]);
+    var b = document.getElementById(containerPrefix + 'detailPage' + pages[i] + 'Btn');
     if (!p) continue;
     if (pages[i] === pageNum) {
       p.style.display = '';
