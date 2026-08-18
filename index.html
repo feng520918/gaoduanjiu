@@ -755,20 +755,22 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 /* 表格右侧经销商详情预览面板（折叠时占用右侧列空间） */
 .dealer-preview-flex { display: flex; gap: 16px; align-items: stretch; }
 .dealer-table-wrap {
-  flex: 0 0 calc(50% - 8px);
+  flex: 1 1 calc(50% - 8px);
   display: flex;
   flex-direction: column;
+  min-width: 0;
   min-height: 0;
 }
 /* 展开数据列时：表格占满整行，右侧看板隐藏 */
 .dealer-preview-flex.expanded .dealer-table-wrap {
-  flex: 0 0 100%;
+  flex: 1 1 100%;
 }
 .dealer-preview-flex.expanded .dealer-preview-panel {
   display: none;
 }
 .dealer-preview-flex.expanded .dealer-table-container {
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  max-height: none;
   min-height: 0;
 }
 .dealer-table-container {
@@ -778,13 +780,13 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   overflow: auto;
   position: relative;
 }
-#dealer-table.folded { width: auto; min-width: auto; }
+#dealer-table.folded { width: 100%; min-width: auto; }
 .dealer-pagination {
   flex-shrink: 0;
   margin-top: 14px;
 }
 .dealer-preview-panel {
-  flex: 0 0 calc(50% - 8px);
+  flex: 1 1 calc(50% - 8px);
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,.04);
@@ -792,6 +794,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   min-width: 0;
 }
 .dealer-preview-content {
+  width: 100%;
   /* 完整展示看板内容，不截断、不出现内部滚动条 */
 }
 .dealer-preview-hint {
