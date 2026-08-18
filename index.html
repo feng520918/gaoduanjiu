@@ -2923,17 +2923,19 @@ function p3DrawKB1Chart(containerId, data, dims){
   var cats=data.map(function(d){return d.fy;});
   var leftDims=dims.filter(function(d){return d.axis==='left';});
   var rightDims=dims.filter(function(d){return d.axis==='right';});
-  var lVals=[], rVals=[];
-  leftDims.forEach(function(d){data.forEach(function(r){var v=r[d.key];if(v>0)lVals.push(v);});});
-  rightDims.forEach(function(d){data.forEach(function(r){var v=r[d.key];if(v>0)rVals.push(v);});});
-  var lMax=lVals.length>0?p3NiceMax(Math.max.apply(null,lVals)):10;
-  var rMax=rVals.length>0?p3NiceMax(Math.max.apply(null,rVals)):10;
-  if(leftDims.length===0) lMax=10;
-  if(rightDims.length===0) rMax=10;
+  var lVals=[], rVals=[], lMinV=0, lMaxV=0, rMinV=0, rMaxV=0;
+  leftDims.forEach(function(d){data.forEach(function(r){var v=r[d.key];if(v!==null&&v!==undefined&&!isNaN(v)){lVals.push(Math.abs(v));if(v<lMinV)lMinV=v;if(v>lMaxV)lMaxV=v;}});});
+  rightDims.forEach(function(d){data.forEach(function(r){var v=r[d.key];if(v!==null&&v!==undefined&&!isNaN(v)){rVals.push(Math.abs(v));if(v<rMinV)rMinV=v;if(v>rMaxV)rMaxV=v;}});});
+  var lMax=lVals.length>0?p3NiceMax(lMaxV):10;
+  var rMax=rVals.length>0?p3NiceMax(rMaxV):10;
+  var lMin=lMinV<0?-p3NiceMax(-lMinV):0;
+  var rMin=rMinV<0?-p3NiceMax(-rMinV):0;
+  if(leftDims.length===0){lMax=10;lMin=0;}
+  if(rightDims.length===0){rMax=10;rMin=0;}
 
   var xScale=function(i){return M.left+(i/Math.max(cats.length-1,1))*cw;};
-  var yL=function(v){return M.top+ch-(v/lMax)*ch;};
-  var yR=function(v){return M.top+ch-(v/rMax)*ch;};
+  var yL=function(v){return M.top+ch-((v-lMin)/(lMax-lMin))*ch;};
+  var yR=function(v){return M.top+ch-((v-rMin)/(rMax-rMin))*ch;};
 
   var svg='<svg width="100%" height="100%" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">';
   dims.forEach(function(d,idx){
@@ -2942,8 +2944,16 @@ function p3DrawKB1Chart(containerId, data, dims){
   for(var g=0;g<=5;g++){
     var gy=M.top+(g/5)*ch;
     svg+='<line x1="'+M.left+'" y1="'+gy.toFixed(1)+'" x2="'+(M.left+cw)+'" y2="'+gy.toFixed(1)+'" stroke="#e2e8f0" stroke-width="0.5"/>';
-    if(leftDims.length>0) svg+='<text x="'+(M.left-8)+'" y="'+(gy+4)+'" text-anchor="end" font-size="11" fill="#94a3b8">'+p3Fmt(Math.round(lMax*(1-g/5)))+'</text>';
-    if(rightDims.length>0) svg+='<text x="'+(M.left+cw+8)+'" y="'+(gy+4)+'" text-anchor="start" font-size="11" fill="#94a3b8">'+p3Fmt(Math.round(rMax*(1-g/5)*10)/10)+'</text>';
+    if(leftDims.length>0) svg+='<text x="'+(M.left-8)+'" y="'+(gy+4)+'" text-anchor="end" font-size="11" fill="#94a3b8">'+p3Fmt(Math.round(lMin+(lMax-lMin)*(1-g/5)))+'</text>';
+    if(rightDims.length>0) svg+='<text x="'+(M.left+cw+8)+'" y="'+(gy+4)+'" text-anchor="start" font-size="11" fill="#94a3b8">'+(rMin+(rMax-rMin)*(1-g/5)).toFixed(1)+'</text>';
+  }
+  if(lMin<0){
+    var lz=yL(0);
+    svg+='<line x1="'+M.left+'" y1="'+lz.toFixed(1)+'" x2="'+(M.left+cw)+'" y2="'+lz.toFixed(1)+'" stroke="#94a3b8" stroke-width="1.1" stroke-dasharray="5,4"/>';
+  }
+  if(rMin<0){
+    var rz=yR(0);
+    svg+='<line x1="'+M.left+'" y1="'+rz.toFixed(1)+'" x2="'+(M.left+cw)+'" y2="'+rz.toFixed(1)+'" stroke="#94a3b8" stroke-width="1.1" stroke-dasharray="5,4" opacity="0.5"/>';
   }
   if(leftDims.length>0) svg+='<text x="14" y="'+(M.top+ch/2)+'" text-anchor="middle" font-size="12" fill="#64748b" transform="rotate(-90,14,'+(M.top+ch/2)+')">家数</text>';
   if(rightDims.length>0) svg+='<text x="'+(W-8)+'" y="'+(M.top+ch/2)+'" text-anchor="middle" font-size="12" fill="#64748b" transform="rotate(90,'+(W-8)+','+(M.top+ch/2)+')">箱数</text>';
@@ -2955,13 +2965,14 @@ function p3DrawKB1Chart(containerId, data, dims){
     var pts=[];
     data.forEach(function(r,i){
       var v=r[d.key];
-      if(v!==null&&v!==undefined&&v>0){
+      if(v!==null&&v!==undefined&&!isNaN(v)){
         var y=d.axis==='left'?yL(v):yR(v);
         pts.push({x:xScale(i),y:y});
       }
     });
     if(pts.length>=2){
-      var fillPath=p3SmoothPath(pts)+' L'+pts[pts.length-1].x.toFixed(1)+','+(M.top+ch)+' L'+pts[0].x.toFixed(1)+','+(M.top+ch)+' Z';
+      var zy=d.axis==='left'?yL(0):yR(0);
+      var fillPath=p3SmoothPath(pts)+' L'+pts[pts.length-1].x.toFixed(1)+','+zy.toFixed(1)+' L'+pts[0].x.toFixed(1)+','+zy.toFixed(1)+' Z';
       svg+='<path d="'+fillPath+'" fill="url(#kb1grad'+idx+')" opacity="0.6"/>';
       svg+='<path d="'+p3SmoothPath(pts)+'" fill="none" stroke="'+d.color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>';
     } else if(pts.length===1){
@@ -2969,7 +2980,7 @@ function p3DrawKB1Chart(containerId, data, dims){
     }
     data.forEach(function(r,i){
       var v=r[d.key];
-      if(v!==null&&v!==undefined&&v>0){
+      if(v!==null&&v!==undefined&&!isNaN(v)){
         var y=d.axis==='left'?yL(v):yR(v);
         svg+='<circle cx="'+xScale(i).toFixed(1)+'" cy="'+y.toFixed(1)+'" r="4" fill="#fff" stroke="'+d.color+'" stroke-width="2"/>';
         var label=d.axis==='right'?v.toFixed(1):String(Math.round(v));
