@@ -760,6 +760,17 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   flex-direction: column;
   min-height: 0;
 }
+/* 展开数据列时：表格占满整行，右侧看板隐藏 */
+.dealer-preview-flex.expanded .dealer-table-wrap {
+  flex: 0 0 100%;
+}
+.dealer-preview-flex.expanded .dealer-preview-panel {
+  display: none;
+}
+.dealer-preview-flex.expanded .dealer-table-container {
+  flex: 0 0 auto;
+  min-height: 0;
+}
 .dealer-table-container {
   flex: 1 1 0;
   max-height: none;
@@ -3845,8 +3856,14 @@ function renderDealerTable() {
 
   // 表格列折叠状态保持
   var tbl = document.getElementById('dealer-table');
-  if (DEALER_COLUMNS_EXPANDED) tbl.classList.remove('folded');
-  else tbl.classList.add('folded');
+  var flexWrap = document.getElementById('dealerPreviewFlex');
+  if (DEALER_COLUMNS_EXPANDED) {
+    tbl.classList.remove('folded');
+    if (flexWrap) flexWrap.classList.add('expanded');
+  } else {
+    tbl.classList.add('folded');
+    if (flexWrap) flexWrap.classList.remove('expanded');
+  }
 
   // 折叠时渲染详情看板：默认排名靠前的经销商（DEALER_FILTERED[0]），筛选/翻页时保持当前选中的经销商
   if (!DEALER_COLUMNS_EXPANDED && total > 0) {
@@ -3986,11 +4003,14 @@ function openDealerDetailModal(d) {
 function toggleDealerColumns() {
   DEALER_COLUMNS_EXPANDED = !DEALER_COLUMNS_EXPANDED;
   var tbl = document.getElementById('dealer-table');
+  var flexWrap = document.getElementById('dealerPreviewFlex');
   if (DEALER_COLUMNS_EXPANDED) {
     tbl.classList.remove('folded');
+    if (flexWrap) flexWrap.classList.add('expanded');
     hideDealerPreview();
   } else {
     tbl.classList.add('folded');
+    if (flexWrap) flexWrap.classList.remove('expanded');
     // 默认展示排名靠前的经销商（排序第一），若之前已选过则保持
     var pi = (DEALER_PREVIEW_INDEX >= 0 && DEALER_PREVIEW_INDEX < DEALER_FILTERED.length) ? DEALER_PREVIEW_INDEX : 0;
     renderDealerPreview(DEALER_FILTERED[pi], pi);
