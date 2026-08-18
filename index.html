@@ -128,6 +128,13 @@ body {
 }
 .section-title .title-sub { font-weight: 500; color: #64748b; font-size: 13px; margin-left: 4px; }
 .section-title:first-of-type { margin-top: 0; }
+.section-title-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.btn-export {
+  padding: 5px 14px; border: 1px solid #3b82f6; border-radius: 6px;
+  background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.btn-export:hover { background: #2563eb; border-color: #2563eb; }
 
 /* ===== Tab2 经销商运营周期 — 彩色现代风格 ===== */
 .trend-filter-bar {
@@ -642,7 +649,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   max-width: 55px;
 }
 #dealer-table th.sticky-col-0 {
-  background: #f1f5f9;
+  background: #1e3a5f;
+  color: #fff;
   z-index: 15;
 }
 #dealer-table tbody tr:nth-child(even) td.sticky-col-0 { background: #f8fafc; }
@@ -662,7 +670,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   text-overflow: ellipsis;
 }
 #dealer-table th.sticky-col-1 {
-  background: #f1f5f9;
+  background: #1e3a5f;
+  color: #fff;
   z-index: 15;
   text-align: center;
 }
@@ -690,6 +699,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   content: '▶';
 }
 .fold-toggle-col:hover { background: #e2e8f0 !important; color: #334155; }
+#dealer-table th.fold-toggle-col { background: #1e3a5f !important; color: #fff; }
+#dealer-table th.fold-toggle-col::after { color: #fff; }
 
 /* 经销商详情弹窗 *//* 经销商详情弹窗 */
 .dealer-detail-mask {
@@ -708,11 +719,12 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .dealer-detail-close { font-size: 24px; cursor: pointer; color: #94a3b8; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 .dealer-detail-close:hover { color: #1e3a5f; background: #f1f5f9; }
 /* 表格右侧经销商详情预览面板（折叠时占用右侧列空间） */
-.dealer-preview-flex { display: flex; gap: 16px; align-items: flex-start; }
-.dealer-table-wrap { flex-shrink: 0; display: flex; flex-direction: column; }
+.dealer-preview-flex { display: flex; gap: 16px; align-items: stretch; }
+.dealer-table-wrap { flex: 0 0 calc(50% - 8px); display: flex; flex-direction: column; }
+.dealer-table-container { flex: 1; max-height: none; }
 #dealer-table.folded { width: auto; min-width: auto; }
 .dealer-preview-panel {
-  flex: 1;
+  flex: 0 0 calc(50% - 8px);
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,.04);
@@ -1434,7 +1446,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   <button class="nav-tab" id="dealerTab3Btn" onclick="switchDealerTab(3)">团购企业/终端客户运营总览</button>
 </div>
 <div id="dealerTab1">
-<div class="section-title">经销商明细情况</div>
+<div class="section-title section-title-flex"><span>经销商明细情况</span><button class="btn-export" onclick="exportDealerTable()">导出</button></div>
 <div class="dealer-toolbar">
   <label>搜索：</label>
   <input type="text" id="dealerSearch" placeholder="公司名称/编码" oninput="renderDealerTable()">
@@ -3761,7 +3773,6 @@ function renderDealerTable() {
       '<td class="' + attrClass + '">' + d['客户属性'] + '</td>' +
       '<td class="' + clsClass + '">' + (d['三级分类'] || '-') + '</td>' +
       '<td>' + (d['市场类型'] || '-') + '</td>' +
-      '<td class="fold-toggle-col" onclick="event.stopPropagation();toggleDealerColumns()" title="展开/收起数据列"></td>' +
       '<td class="foldable-col">' + d['订单_箱'] + '</td>' +
       '<td class="foldable-col">' + d['未发货_箱'] + '</td>' +
       '<td class="foldable-col">' + d['同城配_箱'] + '</td>' +
@@ -3968,6 +3979,55 @@ function highlightDealerRow(idx) {
 function clearDealerRowHighlight() {
   var rows = document.querySelectorAll('#tbody-dealer tr.dealer-row-active');
   for (var i = 0; i < rows.length; i++) rows[i].classList.remove('dealer-row-active');
+}
+
+// 导出当前筛选后的经销商明细为 CSV（UTF-8 BOM，Excel 可直接打开）
+function exportDealerTable() {
+  if (!DEALER_FILTERED || DEALER_FILTERED.length === 0) { alert('没有可导出的数据'); return; }
+  var headers = [
+    '序号','办事处','区域','客户类型','主公司编码','主公司名称','客户属性','三级分类','市场类型',
+    '订单(箱)','未发货(箱)','同城配(箱)','消费者开瓶(瓶)','活动开瓶(瓶)',
+    '累计动销率','消费者累计开瓶率(同城配)','消费者累计开瓶率(订单)',
+    '订单_2023','订单_2024','订单_2025','订单_2026',
+    '同城配_2023','同城配_2024','同城配_2025','同城配_2026',
+    '消费者扫码_2023','消费者扫码_2024','消费者扫码_2025','消费者扫码_2026',
+    '活动扫码_2023','活动扫码_2024','活动扫码_2025','活动扫码_2026'
+  ];
+  var keys = [
+    null,'办事处','区域','客户类型','主公司编码','主公司名称','客户属性','三级分类','市场类型',
+    '订单_箱','未发货_箱','同城配_箱','消费者开瓶_瓶','活动开瓶_瓶',
+    '累计动销率','累计开瓶率_同城配','累计开瓶率_订单',
+    '订单_2023','订单_2024','订单_2025','订单_2026',
+    '同城配_2023','同城配_2024','同城配_2025','同城配_2026',
+    '消费者扫码_2023','消费者扫码_2024','消费者扫码_2025','消费者扫码_2026',
+    '活动扫码_2023','活动扫码_2024','活动扫码_2025','活动扫码_2026'
+  ];
+  var lines = [headers.map(escapeCsv).join(',')];
+  for (var i = 0; i < DEALER_FILTERED.length; i++) {
+    var d = DEALER_FILTERED[i];
+    var vals = keys.map(function(k, idx) {
+      if (k === null) return i + 1;
+      var v = d[k];
+      if (v === undefined || v === null) return '';
+      if (k.indexOf('率') !== -1 && typeof v === 'number') return v + '%';
+      return v;
+    });
+    lines.push(vals.map(escapeCsv).join(','));
+  }
+  var csv = '\ufeff' + lines.join('\n');
+  var blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = '经销商明细_' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); URL.revokeObjectURL(url); }, 200);
+}
+function escapeCsv(v) {
+  var s = String(v);
+  if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  return s;
 }
 
 // 生成经销商详情 HTML（复用于弹窗和下方预览面板）
