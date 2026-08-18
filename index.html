@@ -762,16 +762,10 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,.04);
   padding: 20px 24px;
-  min-height: 520px;
   min-width: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 .dealer-preview-content {
-  flex: 1 1 0;
-  overflow: auto;
-  min-height: 0;
+  /* 完整展示看板内容，不截断、不出现内部滚动条 */
 }
 .dealer-preview-hint {
   font-size: 12px;
