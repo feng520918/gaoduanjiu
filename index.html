@@ -1510,10 +1510,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 <div class="container">
 <div style="margin-bottom:12px">
   <button class="nav-tab active" id="dealerTab1Btn" onclick="switchDealerTab(1)">经销商明细</button>
-  <button class="nav-tab" id="dealerTab3Btn" onclick="switchDealerTab(3)">团购企业/终端客户运营总览</button>
 </div>
 <div id="dealerTab1">
-<div class="section-title section-title-flex"><span>经销商明细情况</span><button class="btn-export" onclick="exportDealerTable()">导出</button></div>
+<div class="section-title section-title-flex"><button class="btn-export" onclick="exportDealerTable()">导出</button></div>
 <div class="dealer-toolbar">
   <label>搜索：</label>
   <input type="text" id="dealerSearch" placeholder="公司名称/编码" oninput="renderDealerTable()">
@@ -1679,149 +1678,6 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   </div>
 </div>
 </div>
-</div>
-
-<!-- ===== 经销商明细 板块3：团购企业/终端客户运营总览 ===== -->
-<div id="dealerTab3" style="display:none">
-  <div class="section-title">团购企业/终端客户运营总览</div>
-
-  <!-- ===== 看板一：企业量质基本情况 ===== -->
-  <div class="panel3-card" style="background:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
-    <div class="section-title" style="font-size:16px;margin-bottom:16px">企业量质基本情况</div>
-
-    <!-- 筛选器一：省/市/经销商/主公司编码 -->
-    <div class="trend-filter-bar" style="margin-bottom:10px">
-      <div class="trend-filter-group">
-        <span class="filter-icon">📍</span>
-        <span class="filter-label">省</span>
-        <select id="kb1Province" onchange="kb1OnProvince()" class="trend-select"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group">
-        <span class="filter-icon">🏙️</span>
-        <span class="filter-label">市</span>
-        <select id="kb1City" onchange="kb1OnCity()" class="trend-select"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group dealer-group">
-        <span class="filter-icon">🏪</span>
-        <span class="filter-label">经销商</span>
-        <select id="kb1Dealer" onchange="kb1OnDealer()" class="trend-select trend-select-dealer"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group dealer-group">
-        <span class="filter-icon">🔢</span>
-        <span class="filter-label">主公司编码</span>
-        <select id="kb1Code" onchange="kb1OnCode()" class="trend-select"><option value="">全部</option></select>
-      </div>
-    </div>
-
-    <!-- 筛选器二：维度选择 -->
-    <div class="trend-filter-bar" style="margin-bottom:10px;flex-wrap:wrap;gap:8px">
-      <span class="filter-label" style="line-height:32px">维度：</span>
-      <span id="kb1PillContainer"></span>
-    </div>
-
-    <div id="kb1-chart" class="chart-area" style="min-height:520px;height:520px;width:100%">
-      <div class="empty-note" style="background:transparent;padding:60px 0"><div style="font-size:48px;margin-bottom:12px;opacity:.3">📊</div><div style="font-size:16px;color:#94a3b8">请选择维度查看趋势</div></div>
-    </div>
-  </div>
-
-  <!-- ===== 看板二：企业/终端购酒客户粘性基本情况 ===== -->
-  <div class="panel3-card" style="background:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
-    <div class="section-title" style="font-size:16px;margin-bottom:16px">企业/终端购酒客户粘性基本情况</div>
-
-    <!-- 筛选器 -->
-    <div class="trend-filter-bar" style="margin-bottom:10px">
-      <div class="trend-filter-group">
-        <span class="filter-icon">📍</span>
-        <span class="filter-label">省</span>
-        <select id="kb2Province" onchange="kb2OnProvince()" class="trend-select"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group">
-        <span class="filter-icon">🏙️</span>
-        <span class="filter-label">市</span>
-        <select id="kb2City" onchange="kb2OnCity()" class="trend-select"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group dealer-group">
-        <span class="filter-icon">🏪</span>
-        <span class="filter-label">经销商</span>
-        <select id="kb2Dealer" onchange="kb2Render()" class="trend-select trend-select-dealer"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group dealer-group">
-        <span class="filter-icon">🔢</span>
-        <span class="filter-label">主公司编码</span>
-        <select id="kb2Code" onchange="kb2Render()" class="trend-select"><option value="">全部</option></select>
-      </div>
-    </div>
-
-    <div class="panel3-kb2-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-      <div>
-        <div style="font-size:14px;font-weight:600;color:#1e3a5f;margin-bottom:8px;text-align:center">累计购酒企业数</div>
-        <div id="kb2-cumulative" class="chart-area panel3-kb2-chart" style="min-height:460px;height:460px;width:100%"></div>
-      </div>
-      <div>
-        <div style="font-size:14px;font-weight:600;color:#1e3a5f;margin-bottom:8px;text-align:center">连续购酒企业数</div>
-        <div id="kb2-consecutive" class="chart-area panel3-kb2-chart" style="min-height:460px;height:460px;width:100%"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== 看板三：企业/终端库存与动销开瓶 ===== -->
-  <div class="panel3-card" style="background:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
-    <div class="section-title" style="font-size:16px;margin-bottom:16px">企业/终端库存与动销开瓶</div>
-
-    <!-- 筛选器 -->
-    <div class="trend-filter-bar" style="margin-bottom:10px;flex-wrap:wrap">
-      <div class="trend-filter-group">
-        <span class="filter-icon">📍</span>
-        <span class="filter-label">省</span>
-        <select id="kb3Province" onchange="kb3OnProvince()" class="trend-select"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group">
-        <span class="filter-icon">🏙️</span>
-        <span class="filter-label">市</span>
-        <select id="kb3City" onchange="kb3OnCity()" class="trend-select"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group dealer-group">
-        <span class="filter-icon">🏪</span>
-        <span class="filter-label">经销商</span>
-        <select id="kb3Dealer" onchange="kb3OnDealer()" class="trend-select trend-select-dealer"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group dealer-group">
-        <span class="filter-icon">🔢</span>
-        <span class="filter-label">主公司编码</span>
-        <select id="kb3Code" onchange="kb3OnCode()" class="trend-select"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group dealer-group">
-        <span class="filter-icon">🏢</span>
-        <span class="filter-label">企业/终端</span>
-        <select id="kb3Terminal" onchange="kb3Render()" class="trend-select trend-select-dealer" style="max-width:280px"><option value="">全部</option></select>
-      </div>
-      <div class="trend-filter-group dealer-group">
-        <span class="filter-icon">🔖</span>
-        <span class="filter-label">企业/终端编码</span>
-        <select id="kb3TerminalCode" onchange="kb3OnTerminalCode()" class="trend-select" style="max-width:200px"><option value="">全部</option></select>
-      </div>
-    </div>
-
-    <!-- 库存汇总 -->
-    <div id="kb3Summary" style="display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap">
-      <div style="flex:1;min-width:180px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:10px;padding:14px 18px;text-align:center">
-        <div style="font-size:12px;color:#6b7280;margin-bottom:4px">历史累计下单（瓶）</div>
-        <div style="font-size:22px;font-weight:700;color:#3b82f6" id="kb3TotalOrder">-</div>
-      </div>
-      <div style="flex:1;min-width:180px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:10px;padding:14px 18px;text-align:center">
-        <div style="font-size:12px;color:#6b7280;margin-bottom:4px">历史累计开瓶（瓶）</div>
-        <div style="font-size:22px;font-weight:700;color:#10b981" id="kb3TotalScan">-</div>
-      </div>
-      <div style="flex:1;min-width:180px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:10px;padding:14px 18px;text-align:center">
-        <div style="font-size:12px;color:#6b7280;margin-bottom:4px">库存汇总（瓶）</div>
-        <div style="font-size:22px;font-weight:700;color:#f59e0b" id="kb3Inventory">-</div>
-      </div>
-    </div>
-
-    <div id="kb3-chart" class="chart-area" style="min-height:520px;height:520px;width:100%">
-      <div class="empty-note" style="background:transparent;padding:60px 0"><div style="font-size:48px;margin-bottom:12px;opacity:.3">📊</div><div style="font-size:16px;color:#94a3b8">请选择筛选条件查看趋势</div></div>
-    </div>
-  </div>
 </div>
 
 <script src="data.js"></script>
@@ -2041,22 +1897,10 @@ function switchTab(t) {
 
 function switchDealerTab(tab) {
   var t1 = document.getElementById('dealerTab1');
-  var t3 = document.getElementById('dealerTab3');
   var b1 = document.getElementById('dealerTab1Btn');
-  var b3 = document.getElementById('dealerTab3Btn');
-  if (!t1 || !t3) return;
-  // Hide all
-  t1.style.display = 'none'; t3.style.display = 'none';
-  if (b1) b1.classList.remove('active');
-  if (b3) b3.classList.remove('active');
-  if (tab === 1) {
-    t1.style.display = '';
-    if (b1) b1.classList.add('active');
-  } else if (tab === 3) {
-    t3.style.display = '';
-    if (b3) b3.classList.add('active');
-    if (!panel3Initialized) { initPanel3(); panel3Initialized = true; }
-  }
+  if (!t1) return;
+  t1.style.display = '';
+  if (b1) b1.classList.add('active');
 }
 
 // =====================================================================
