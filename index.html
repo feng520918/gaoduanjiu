@@ -3843,31 +3843,43 @@ function setQuickFilter(field, value) {
 }
 
 function resetDealerFilters() {
-  document.getElementById('dealerSearch').value = '';
-  document.getElementById('filterOffice').value = '';
-  // 重置区域下拉框（恢复全部地级市）
-  onFilterOfficeChange();
-  document.getElementById('filterType').value = '';
-  document.getElementById('filterClass').value = '';
-  document.getElementById('filterAttr').value = '';
-  document.getElementById('filterMarket').value = '';
-  document.getElementById('filterViolation').value = '';
-  // 基于筛选后经销商重新计算滑块最大值
-  updateSliderMaxValues(getFilteredDealers());
-  // 重置所有拨杆：min→0, max→当前最大值
-  ['Order','Delivery','Scan'].forEach(function(p) {
-    document.getElementById('range' + p + 'Min').value = 0;
-    document.getElementById('range' + p + 'Max').value = document.getElementById('range' + p + 'Max').max;
-    updateRangeVisual(p);
-  });
-  // 百分比拨杆重置到 0~100
-  ['Move','Open'].forEach(function(p) {
-    document.getElementById('range' + p + 'Min').value = 0;
-    document.getElementById('range' + p + 'Max').value = 100;
-    updateRangeVisual(p);
-  });
+  try {
+    var g = function(id) { var el = document.getElementById(id); return el || { value: '' }; };
+    g('dealerSearch').value = '';
+    g('filterOffice').value = '';
+    g('filterType').value = '';
+    g('filterClass').value = '';
+    g('filterAttr').value = '';
+    g('filterMarket').value = '';
+    g('filterViolation').value = '';
+    // 重置区域下拉框（恢复全部地级市）
+    if (typeof onFilterOfficeChange === 'function') onFilterOfficeChange();
+    // 基于全部经销商重新计算滑块最大值
+    if (typeof updateSliderMaxValues === 'function' && typeof getFilteredDealers === 'function') {
+      updateSliderMaxValues(getFilteredDealers());
+    }
+    // 重置所有拨杆：min→0, max→当前最大值
+    ['Order','Delivery','Scan'].forEach(function(p) {
+      var minEl = document.getElementById('range' + p + 'Min');
+      var maxEl = document.getElementById('range' + p + 'Max');
+      if (minEl) minEl.value = 0;
+      if (maxEl) maxEl.value = maxEl.max;
+      if (typeof updateRangeVisual === 'function') updateRangeVisual(p);
+    });
+    // 百分比拨杆重置到 0~100
+    ['Move','Open'].forEach(function(p) {
+      var minEl = document.getElementById('range' + p + 'Min');
+      var maxEl = document.getElementById('range' + p + 'Max');
+      if (minEl) minEl.value = 0;
+      if (maxEl) maxEl.value = 100;
+      if (typeof updateRangeVisual === 'function') updateRangeVisual(p);
+    });
+  } catch (e) {
+    console.warn('resetDealerFilters partial error:', e);
+  }
+  // 无论如何都强制回到第 1 页并重绘表格，确保数据一定刷新
   DEALER_PAGE = 1;
-  renderDealerTable();
+  if (typeof renderDealerTable === 'function') renderDealerTable();
 }
 
 // =====================================================================
