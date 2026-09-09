@@ -3854,6 +3854,9 @@ function resetDealerFilters() {
     g('filterViolation').value = '';
     // 重置区域下拉框（恢复全部地级市）
     if (typeof onFilterOfficeChange === 'function') onFilterOfficeChange();
+    // onFilterOfficeChange 会「保留原本地级市选择」，重置时需强制清回「全部」
+    var faReset = document.getElementById('filterArea');
+    if (faReset) faReset.value = '';
     // 基于全部经销商重新计算滑块最大值
     if (typeof updateSliderMaxValues === 'function' && typeof getFilteredDealers === 'function') {
       updateSliderMaxValues(getFilteredDealers());
