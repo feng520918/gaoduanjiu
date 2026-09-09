@@ -529,7 +529,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   min-height: 26px; gap: 8px;
 }
 .avg-item .avg-lbl {
-  font-size: 10px; color: #475569; font-weight: 600;
+  font-size: 12px; color: #475569; font-weight: 600;
   white-space: nowrap; display: flex; align-items: center;
 }
 .avg-item .avg-lbl::before {
@@ -538,12 +538,12 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   border-radius: 1.5px; margin-right: 5px;
 }
 .avg-combo {
-  font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums;
+  font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums;
   display: flex; align-items: baseline; gap: 2px;
 }
-.avg-combo .tag { font-size: 9px; color: #94a3b8; font-weight: 500; }
+.avg-combo .tag { font-size: 11px; color: #94a3b8; font-weight: 500; }
 .avg-combo .avg-avg { color: #1e3a5f; }
-.avg-combo .sep { color: #94a3b8; font-weight: 400; margin: 0 3px; font-size: 11px; }
+.avg-combo .sep { color: #94a3b8; font-weight: 400; margin: 0 3px; font-size: 13px; }
 .avg-combo .avg-sum { color: #b45309; }
 .avg-combo b { color: #1e3a5f; font-weight: 700; margin-left: 2px; font-variant-numeric: tabular-nums; }
 
@@ -564,7 +564,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   border-left: 1px dashed #e2e8f0;
 }
 .stat-row-pair .stat-part .sp-lbl {
-  font-size: 10px; color: #475569; font-weight: 600;
+  font-size: 12px; color: #475569; font-weight: 600;
   white-space: nowrap; display: flex; align-items: center; flex-shrink: 0;
 }
 .stat-row-pair .stat-part .sp-lbl::before {
@@ -573,11 +573,11 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   border-radius: 1.5px; margin-right: 5px;
 }
 .stat-row-pair .stat-part .sp-val {
-  font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums;
+  font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
   color: #1e3a5f; white-space: nowrap;
 }
-.stat-row-pair .stat-part .sp-val .tag { font-size: 9px; color: #94a3b8; font-weight: 500; }
-.stat-row-pair .stat-part .sp-val .sep { color: #94a3b8; font-weight: 400; margin: 0 2px; font-size: 10px; }
+.stat-row-pair .stat-part .sp-val .tag { font-size: 11px; color: #94a3b8; font-weight: 500; }
+.stat-row-pair .stat-part .sp-val .sep { color: #94a3b8; font-weight: 400; margin: 0 2px; font-size: 12px; }
 .stat-row-pair .stat-part .sp-val .avg-sum { color: #b45309; }
 .stat-row-pair .stat-part .sp-val .avg-avg { color: #1e3a5f; }
 
@@ -617,8 +617,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   color: #334155;
 }
 #dealer-table th {
-  background: #1e3a5f;
-  color: #fff;
+  background: #eef2ff;
+  color: #334155;
   font-weight: 600;
   position: sticky;
   top: 0;
@@ -651,8 +651,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   max-width: 55px;
 }
 #dealer-table th.sticky-col-0 {
-  background: #1e3a5f;
-  color: #fff;
+  background: #eef2ff;
+  color: #334155;
   z-index: 15;
 }
 #dealer-table tbody tr:nth-child(even) td.sticky-col-0 { background: #f8fafc; }
@@ -672,8 +672,8 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   text-overflow: ellipsis;
 }
 #dealer-table th.sticky-col-1 {
-  background: #1e3a5f;
-  color: #fff;
+  background: #eef2ff;
+  color: #334155;
   z-index: 15;
   text-align: center;
 }
@@ -1507,7 +1507,6 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 <div class="container">
 <div style="margin-bottom:12px">
   <button class="nav-tab active" id="dealerTab1Btn" onclick="switchDealerTab(1)">经销商明细</button>
-  <button class="nav-tab" id="dealerTab2Btn" onclick="switchDealerTab(2)">经销商运营周期总览</button>
   <button class="nav-tab" id="dealerTab3Btn" onclick="switchDealerTab(3)">团购企业/终端客户运营总览</button>
 </div>
 <div id="dealerTab1">
@@ -1677,77 +1676,6 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   </div>
 </div>
 </div>
-</div>
-
-<!-- ===== 经销商明细 板块2：经销商运营周期总览 ===== -->
-<div id="dealerTab2" style="display:none">
-  <div class="section-title">经销商运营周期总览 <span class="title-sub">— 季度趋势对比</span></div>
-
-  <!-- 筛选器一：办事处 / 地级市 / 经销商 -->
-  <div class="trend-filter-bar">
-    <div class="trend-filter-group">
-      <span class="filter-icon">📍</span>
-      <span class="filter-label">办事处</span>
-      <select id="trendOffice" onchange="updateTrendDealerList()" class="trend-select">
-        <option value="">全部</option>
-      </select>
-    </div>
-    <div class="trend-filter-group">
-      <span class="filter-icon">🏙️</span>
-      <span class="filter-label">地级市</span>
-      <select id="trendCity" onchange="updateTrendDealerList()" class="trend-select">
-        <option value="">全部</option>
-      </select>
-    </div>
-    <div class="trend-filter-group dealer-group">
-      <span class="filter-icon">🏪</span>
-      <span class="filter-label">经销商</span>
-      <select id="trendDealer" onchange="updateTrendChart()" class="trend-select trend-select-dealer">
-        <option value="">请选择经销商</option>
-      </select>
-    </div>
-    <button class="trend-reset-btn" onclick="resetTrendFilters()" title="重置筛选一">
-      <span style="font-size:13px">↻</span> 重置
-    </button>
-  </div>
-  
-  <!-- 筛选器二：维度选择 + 费用细类筛选 -->
-  <div class="trend-dim-bar">
-    <span class="trend-dim-label">📊 展示维度</span>
-    <div class="trend-dim-pills">
-      <label class="dim-pill pill-blue"><input type="checkbox" id="dim-order" checked onchange="updateTrendChart()"> <span>订单(箱)</span></label>
-      <label class="dim-pill pill-green"><input type="checkbox" id="dim-delivery" checked onchange="updateTrendChart()"> <span>同城配(箱)</span></label>
-      <label class="dim-pill pill-orange"><input type="checkbox" id="dim-scan" checked onchange="updateTrendChart()"> <span>扫码(瓶)</span></label>
-      <label class="dim-pill pill-purple"><input type="checkbox" id="dim-fee-total" onchange="updateTrendChart()"> <span>费用-全量</span></label>
-      <div class="dim-pill-group">
-        <label class="dim-pill pill-cyan"><input type="checkbox" id="dim-fee-act" onchange="onFeeActToggle()"> <span>费用-活动类型</span></label>
-        <select id="trendFeeActType" onchange="updateTrendChart()" class="trend-sub-select" style="display:none">
-          <option value="">全部活动类型</option>
-        </select>
-      </div>
-      <div class="dim-pill-group">
-        <label class="dim-pill pill-red"><input type="checkbox" id="dim-fee-type" onchange="onFeeTypeToggle()"> <span>费用-费用类型</span></label>
-        <select id="trendFeeTypeSel" onchange="updateTrendChart()" class="trend-sub-select" style="display:none">
-          <option value="">全部费用类型</option>
-          <option value="总部投放">总部投放</option>
-          <option value="随量计提">随量计提</option>
-        </select>
-      </div>
-    </div>
-    <button class="trend-reset-btn trend-reset-sm" onclick="resetTrendDims()" title="重置筛选二">
-      <span style="font-size:13px">↻</span> 重置
-    </button>
-  </div>
-  
-  <!-- 图表区域 -->
-  <div class="chart-area trend-chart-wrap" style="margin-top:14px">
-    <div id="trend-chart" style="min-height:480px">
-      <div class="empty-note" style="background:transparent;padding:60px 0">
-        <div style="font-size:48px;margin-bottom:12px;opacity:0.3">📈</div>
-        <div style="font-size:16px;color:#94a3b8;font-weight:500">请选择经销商查看季度趋势</div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- ===== 经销商明细 板块3：团购企业/终端客户运营总览 ===== -->
@@ -2110,25 +2038,17 @@ function switchTab(t) {
 
 function switchDealerTab(tab) {
   var t1 = document.getElementById('dealerTab1');
-  var t2 = document.getElementById('dealerTab2');
   var t3 = document.getElementById('dealerTab3');
   var b1 = document.getElementById('dealerTab1Btn');
-  var b2 = document.getElementById('dealerTab2Btn');
   var b3 = document.getElementById('dealerTab3Btn');
-  if (!t1 || !t2 || !t3) return;
+  if (!t1 || !t3) return;
   // Hide all
-  t1.style.display = 'none'; t2.style.display = 'none'; t3.style.display = 'none';
+  t1.style.display = 'none'; t3.style.display = 'none';
   if (b1) b1.classList.remove('active');
-  if (b2) b2.classList.remove('active');
   if (b3) b3.classList.remove('active');
   if (tab === 1) {
     t1.style.display = '';
     if (b1) b1.classList.add('active');
-  } else if (tab === 2) {
-    t2.style.display = '';
-    if (b2) b2.classList.add('active');
-    if (!trendFiltersInitialized) { initTrendFilters(); trendFiltersInitialized = true; }
-    setTimeout(function(){ updateTrendChart(); }, 30);
   } else if (tab === 3) {
     t3.style.display = '';
     if (b3) b3.classList.add('active');
