@@ -431,6 +431,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   display: flex; gap: 6px; margin-bottom: 4px; padding: 0;
   background: transparent; border-radius: 6px; box-shadow: none;
   font-size: 10px;
+  align-items: flex-start;
 }
 .stats-panel-left, .stats-panel-right {
   flex: 1; padding: 5px 8px; display: flex; flex-direction: column; gap: 3px;
@@ -438,6 +439,7 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
   border: 1px solid #e2e8f0;
 }
+.stats-panel-right { justify-content: center; }
 
 /* ===== 拨杆范围筛选 — 折叠面板 ===== */
 .range-folder { margin: 10px 0; }
@@ -761,42 +763,39 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   min-width: 0;
   min-height: 0;
 }
-/* 展开数据列时：表格占满整行，右侧看板隐藏 */
-.dealer-preview-flex.expanded .dealer-table-wrap {
-  flex: 1 1 100%;
-}
-.dealer-preview-flex.expanded .dealer-preview-panel {
-  display: none;
-}
-.dealer-preview-flex.expanded .dealer-table-container {
-  flex: 1 1 auto;
-  max-height: none;
-  min-height: 0;
-}
+/* 左侧表格始终显示全部列，超出部分通过横向滚动查看；右侧看板常驻展示 */
 .dealer-table-container {
   flex: 1 1 0;
-  max-height: none;
+  max-height: calc(100vh - 280px);
   min-height: 0;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
   position: relative;
 }
-#dealer-table.folded { width: 100%; min-width: auto; }
 .dealer-pagination {
   flex-shrink: 0;
   margin-top: 14px;
 }
 .dealer-preview-panel {
   flex: 1 1 calc(50% - 8px);
+  align-self: flex-start;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,.04);
-  padding: 10px 14px;
+  padding: 8px 10px;
   min-width: 0;
 }
 .dealer-preview-content {
   width: 100%;
   /* 完整展示看板内容，不截断、不出现内部滚动条 */
 }
+.dealer-preview-hint { margin-bottom: 4px; }
+.dealer-preview-nav { margin-bottom: 8px; padding-bottom: 6px; }
+.dealer-preview-panel .dealer-detail-header { margin-bottom: 4px; padding-bottom: 4px; }
+.dealer-preview-panel .dealer-detail-info { margin-bottom: 6px; }
+.dealer-preview-panel .dealer-detail-chart { margin: 0 0 4px; }
+.dealer-preview-panel .violation-chart { margin: 0 0 4px; }
+.dealer-preview-panel .dealer-detail-box > *:last-child { margin-bottom: 0 !important; }
 .dealer-preview-hint {
   font-size: 12px;
   color: #94a3b8;
@@ -1634,7 +1633,6 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
     <th rowspan="2" style="min-width:68px">客户属性</th>
     <th rowspan="2" style="min-width:68px">三级分类</th>
     <th rowspan="2" style="min-width:72px">市场类型</th>
-    <th rowspan="2" class="fold-toggle-col" onclick="toggleDealerColumns()" title="展开/收起数据列"></th>
     <th colspan="5" class="foldable-col">动销数量汇总</th>
     <th colspan="3" class="foldable-col">动销指标汇总</th>
     <th colspan="4" class="foldable-col">订单(箱) by 财年</th>
@@ -1671,7 +1669,6 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
     </thead>
     <tbody id="tbody-dealer"></tbody>
     </table>
-    <div class="dealer-fold-strip" id="dealerFoldStrip" onclick="toggleDealerColumns()" title="展开/收起数据列"></div>
     </div>
     <div class="dealer-pagination" id="dealerPagination"></div>
   </div>
@@ -3857,34 +3854,22 @@ function renderDealerTable() {
   document.getElementById('tbody-dealer').innerHTML = html;
   document.getElementById('dealerCount').textContent = '共 ' + total + ' 条';
 
-  // 表格列折叠状态保持
+  // 表格始终显示全部列（不折叠），超出部分横向滚动；右侧看板常驻展示需显示的经销商
   var tbl = document.getElementById('dealer-table');
   var flexWrap = document.getElementById('dealerPreviewFlex');
-  if (DEALER_COLUMNS_EXPANDED) {
-    tbl.classList.remove('folded');
-    if (flexWrap) flexWrap.classList.add('expanded');
-  } else {
-    tbl.classList.add('folded');
-    if (flexWrap) flexWrap.classList.remove('expanded');
-  }
-
-  // 折叠时渲染详情看板：默认排名靠前的经销商（DEALER_FILTERED[0]），筛选/翻页时保持当前选中的经销商
-  if (!DEALER_COLUMNS_EXPANDED && total > 0) {
+  if (tbl) tbl.classList.remove('folded');
+  if (flexWrap) flexWrap.classList.remove('expanded');
+  if (total > 0) {
     var pi = (DEALER_PREVIEW_INDEX >= 0 && DEALER_PREVIEW_INDEX < total) ? DEALER_PREVIEW_INDEX : 0;
     renderDealerPreview(DEALER_FILTERED[pi], pi);
   } else {
     hideDealerPreview();
   }
-
-  // 重新定位折叠条并监听滚动/尺寸变化
-  setTimeout(positionDealerFoldStrip, 0);
-  var container = document.getElementById('dealerTableContainer');
-  if (container && !container._foldStripBound) {
-    container.addEventListener('scroll', positionDealerFoldStrip);
-    container._foldStripBound = true;
-  }
+  // 尺寸变化时同步左右高度（以右侧看板为基准）
   if (!window._foldStripResizeBound) {
-    window.addEventListener('resize', positionDealerFoldStrip);
+    window.addEventListener('resize', function() {
+      syncDealerHeights();
+    });
     window._foldStripResizeBound = true;
   }
 
@@ -4039,15 +4024,55 @@ function renderDealerPreview(d, idx) {
   content.innerHTML = navHtml + buildDealerDetailHtml(d, 'prev');
   panel.style.display = 'flex';
   highlightDealerRow(idx);
-  // 显示看板后重新定位折叠条，确保左右高度对齐
-  setTimeout(positionDealerFoldStrip, 0);
+  // 显示看板后重新定位折叠条，并同步左右高度
+  setTimeout(function() {
+    positionDealerFoldStrip();
+    syncDealerHeights();
+  }, 0);
 }
 
 function hideDealerPreview() {
   var panel = document.getElementById('dealerPreviewPanel');
   if (panel) panel.style.display = 'none';
   clearDealerRowHighlight();
-  setTimeout(positionDealerFoldStrip, 0);
+  setTimeout(function() {
+    positionDealerFoldStrip();
+    resetDealerHeights();
+  }, 0);
+}
+
+// 同步左右两侧高度：左侧表格容器高度跟随右侧看板内容自然高度
+function syncDealerHeights() {
+  var panel = document.getElementById('dealerPreviewPanel');
+  var wrap = document.querySelector('.dealer-table-wrap');
+  var container = document.getElementById('dealerTableContainer');
+  var pagination = document.getElementById('dealerPagination');
+  if (!panel || !wrap || !container) return;
+  if (panel.style.display === 'none' || panel.offsetParent === null || DEALER_COLUMNS_EXPANDED) {
+    resetDealerHeights();
+    return;
+  }
+  // 右侧看板内容自然高度（含 padding）
+  var panelH = panel.scrollHeight;
+  var pagiH = 0;
+  if (pagination) {
+    var pagiRect = pagination.getBoundingClientRect();
+    pagiH = pagiRect.height + 14; // 14px 为 margin-top
+  }
+  var containerH = Math.max(120, panelH - pagiH);
+  wrap.style.height = panelH + 'px';
+  container.style.height = containerH + 'px';
+  container.style.maxHeight = containerH + 'px';
+}
+
+function resetDealerHeights() {
+  var wrap = document.querySelector('.dealer-table-wrap');
+  var container = document.getElementById('dealerTableContainer');
+  if (wrap) wrap.style.height = '';
+  if (container) {
+    container.style.maxHeight = '';
+    container.style.height = '';
+  }
 }
 
 // 左右切换经销商看板（dir=-1 上一个 / dir=1 下一个）
@@ -4254,7 +4279,7 @@ function drawDealerTrendChart(d) {
   var consData  = yrs.map(function(y) { return d['消费者扫码_' + y] || 0; });
   var actData   = yrs.map(function(y) { return d['活动扫码_' + y] || 0; });
 
-  var w = 840, h = 340, padL = 60, padR = 60, padT = 30, padB = 45;
+  var w = 840, h = 340, padL = 32, padR = 32, padT = 26, padB = 42;
   var cw = w - padL - padR, ch = h - padT - padB;
   var maxBox = Math.max.apply(null, orderData.concat(delivData).concat([10]));
   var maxBtl = Math.max.apply(null, consData.concat(actData).concat([10]));
@@ -4309,8 +4334,8 @@ function drawDealerTrendChart(d) {
   svg += '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (padT+ch) + '" stroke="#cbd5e1" stroke-width="1.5"/>';
   svg += '<line x1="' + (w-padR) + '" y1="' + padT + '" x2="' + (w-padR) + '" y2="' + (padT+ch) + '" stroke="#cbd5e1" stroke-width="1.5"/>';
   svg += '<line x1="' + padL + '" y1="' + (padT+ch) + '" x2="' + (w-padR) + '" y2="' + (padT+ch) + '" stroke="#cbd5e1" stroke-width="1.5"/>';
-  svg += '<text x="' + (padL-36) + '" y="' + (padT+ch/2) + '" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600" transform="rotate(-90,' + (padL-36) + ',' + (padT+ch/2) + ')">箱数</text>';
-  svg += '<text x="' + (w-padR+36) + '" y="' + (padT+ch/2) + '" text-anchor="middle" font-size="11" fill="#f59e0b" font-weight="600" transform="rotate(90,' + (w-padR+36) + ',' + (padT+ch/2) + ')">瓶数</text>';
+  svg += '<text x="' + (padL-15) + '" y="' + (padT+ch/2) + '" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600" transform="rotate(-90,' + (padL-15) + ',' + (padT+ch/2) + ')">箱数</text>';
+  svg += '<text x="' + (w-padR+15) + '" y="' + (padT+ch/2) + '" text-anchor="middle" font-size="11" fill="#f59e0b" font-weight="600" transform="rotate(90,' + (w-padR+15) + ',' + (padT+ch/2) + ')">瓶数</text>';
   // X轴标签
   yrs.forEach(function(y, i) {
     var cx = padL + i * xStep + xStep/2;
