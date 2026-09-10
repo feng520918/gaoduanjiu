@@ -15,10 +15,10 @@ body {
 .login-overlay {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
   background:
-    linear-gradient(90deg, rgba(58,12,21,.28) 0%, rgba(58,12,21,.12) 45%, rgba(90,18,32,.42) 100%),
+    linear-gradient(90deg, rgba(58,12,21,.26) 0%, rgba(58,12,21,.20) 50%, rgba(90,18,32,.34) 100%),
     url('bg.jpg') no-repeat center center / cover;
-  display: flex; align-items: center; justify-content: flex-end;
-  padding-right: clamp(24px, 8vw, 120px); z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 24px; z-index: 9999;
 }
 .login-card {
   background: rgba(255,251,246,.93); border-radius: 16px; padding: 48px 40px 36px;
@@ -84,24 +84,80 @@ body {
 .pwd-modal .pwd-msg.success { color: #10b981; }
 /* ===== 门户选择页 ===== */
 #portal-page {
-  display: none; min-height: 100vh;
+  display: none; min-height: 100vh; position: relative;
   background:
-    linear-gradient(90deg, rgba(58,12,21,.28) 0%, rgba(58,12,21,.10) 45%, rgba(90,18,32,.42) 100%),
+    linear-gradient(90deg, rgba(58,12,21,.26) 0%, rgba(58,12,21,.16) 45%, rgba(90,18,32,.40) 100%),
     url('bg.jpg') no-repeat center bottom / cover;
-  align-items: flex-end; justify-content: flex-start; flex-direction: column;
-  padding-right: clamp(30px, 9vw, 150px);
+  flex-direction: column; align-items: center; justify-content: center;
+  padding-left: 40.5vw; padding-right: 0;
 }
-.portal-cards { display: flex; gap: 40px; flex-wrap: wrap; justify-content: flex-end; padding: 40px 0; }
+.portal-cards {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; flex-wrap: wrap; padding: 0;
+}
 .portal-card {
-  background: rgba(255,251,246,.94); border-radius: 16px; padding: 48px 56px; width: 380px;
-  box-shadow: 0 20px 60px rgba(31,5,10,.4); cursor: pointer; transition: transform .2s, box-shadow .2s;
-  text-align: center; border: 1px solid rgba(201,162,39,.3);
+  position: relative; background: transparent; border: none; border-radius: 0;
+  padding: 14px 62px; width: auto; cursor: pointer; text-align: center;
+  transition: transform .28s ease;
 }
-.portal-card:hover { transform: translateY(-4px); box-shadow: 0 28px 72px rgba(31,5,10,.5); }
-.portal-card .icon { font-size: 52px; margin-bottom: 18px; }
-.portal-card h2 { font-size: 22px; color: #5a1220; margin-bottom: 10px; letter-spacing: 2px; }
-.portal-card p { font-size: 14px; color: #94a3b8; }
-.portal-card .arrow { margin-top: 24px; font-size: 28px; color: #a5293a; }
+.portal-card + .portal-card::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 1px; height: 104px;
+  background: linear-gradient(180deg, transparent, rgba(214,178,90,.75) 50%, transparent);
+}
+.portal-card .icon {
+  width: 76px; height: 76px; margin: 0 auto 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px; color: #e6c877; border-radius: 50%;
+  border: 1px solid rgba(214,178,90,.6);
+  background: radial-gradient(circle at 50% 32%, rgba(214,178,90,.26), rgba(214,178,90,.03) 72%);
+  box-shadow: inset 0 0 18px rgba(214,178,90,.12);
+  transition: box-shadow .28s, transform .28s, border-color .28s;
+}
+.portal-card .icon svg { width: 1em; height: 1em; display: block; }
+.portal-card h2 {
+  font-size: 21px; color: #fff; margin-bottom: 0; letter-spacing: 3px;
+  font-weight: 600; text-shadow: 0 2px 14px rgba(20,3,7,.9), 0 0 30px rgba(20,3,7,.6);
+}
+.portal-card p {
+  font-size: 13px; color: rgba(255,255,255,.66); margin-top: 13px;
+  letter-spacing: 1px; text-shadow: 0 1px 10px rgba(20,3,7,.85);
+}
+.portal-card .arrow {
+  margin-top: 20px; font-size: 16px; color: #d6b25a; letter-spacing: 0;
+  transition: transform .28s ease; text-shadow: 0 1px 10px rgba(20,3,7,.8);
+}
+.portal-card:hover { transform: translateY(-6px); }
+.portal-card:hover .icon { border-color: #e6c877; box-shadow: 0 0 0 9px rgba(214,178,90,.13), inset 0 0 22px rgba(214,178,90,.2); }
+.portal-card:hover h2 { color: #f3dfa4; }
+.portal-card:hover .arrow { transform: translateX(9px); }
+/* 开发中标签 */
+.portal-card .tag-soon {
+  display: inline-block; margin-top: 13px; padding: 2px 12px;
+  font-size: 11px; letter-spacing: 1.5px; border-radius: 20px;
+  color: #e6cd8b; border: 1px solid rgba(214,178,90,.5);
+  background: rgba(214,178,90,.1);
+}
+/* 门户提示浮层：水平与门户入口同区域，垂直落在入口下方，避免遮挡 */
+.portal-toast-mask {
+  position: fixed; inset: 0; z-index: 10001;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(18,3,6,.5);
+  padding-left: 40.5vw; padding-top: 38vh;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s ease;
+}
+.portal-toast-mask.show { opacity: 1; }
+.portal-toast {
+  padding: 20px 46px; border-radius: 14px;
+  background: linear-gradient(135deg, rgba(58,12,21,.99), rgba(26,4,9,.99));
+  color: #f3e2b6;
+  border: 1px solid rgba(214,178,90,.65);
+  font-size: 15px; letter-spacing: 2px; white-space: nowrap;
+  box-shadow: 0 26px 68px rgba(0,0,0,.62), inset 0 0 26px rgba(214,178,90,.09);
+  transform: scale(.94); transition: transform .25s ease;
+}
+.portal-toast-mask.show .portal-toast { transform: scale(1); }
 /* ===== Header ===== */
 .header {
   background: linear-gradient(135deg, #5a1220 0%, #7a1f31 50%, #3a0c15 100%);
@@ -142,6 +198,10 @@ body {
   cursor: pointer; transition: all .15s; white-space: nowrap;
 }
 .btn-export:hover { background: #81202e; border-color: #81202e; }
+.dealer-tab-row {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px; margin-bottom: 0;
+}
 
 /* ===== Tab2 经销商运营周期 — 彩色现代风格 ===== */
 .trend-filter-bar {
@@ -1052,6 +1112,20 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 .tag-risk { color: #ef4444; font-weight: 600; }
 /* ===== 手机端响应式布局 ===== */
 /* 平板/小屏 (≤768px) */
+/* 中等屏幕：门户入口收窄，避免与酒瓶/边框重叠 */
+@media screen and (max-width: 1440px) {
+  .portal-card { padding: 12px 32px; }
+  .portal-card .icon { width: 66px; height: 66px; font-size: 29px; margin-bottom: 16px; }
+  .portal-card h2 { font-size: 18px; letter-spacing: 2px; }
+  .portal-card + .portal-card::before { height: 88px; }
+}
+@media screen and (max-width: 1100px) {
+  .portal-card { padding: 10px 18px; }
+  .portal-card h2 { font-size: 15px; letter-spacing: 1.2px; }
+  .portal-card p { font-size: 12px; letter-spacing: .5px; }
+  .portal-card .icon { width: 56px; height: 56px; font-size: 25px; margin-bottom: 13px; }
+  .portal-card .arrow { font-size: 14px; margin-top: 14px; }
+}
 @media screen and (max-width: 768px) {
   body { font-size: 13px; -webkit-text-size-adjust: 100%; }
   .container { padding: 6px; }
@@ -1068,12 +1142,13 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   .nav-tab { padding: 8px 14px; font-size: 12px; border-radius: 6px 6px 0 0; }
   .nav-bar { margin-bottom: 8px; }
   /* ——— 门户页 ——— */
-  .portal-cards { flex-direction: column; gap: 12px; padding: 16px; }
-  .portal-card { width: 100%; padding: 20px 16px; }
-  .portal-card .icon { font-size: 36px; margin-bottom: 6px; }
-  .portal-card h2 { font-size: 17px; letter-spacing: 1px; }
-  .portal-card p { font-size: 12px; }
-  .portal-card .arrow { margin-top: 12px; font-size: 22px; }
+  .portal-cards { flex-direction: column; gap: 30px; padding: 16px; }
+  .portal-card { width: 100%; padding: 8px 20px; }
+  .portal-card + .portal-card::before { display: none; }
+  .portal-card .icon { width: 62px; height: 62px; font-size: 28px; margin-bottom: 14px; }
+  .portal-card h2 { font-size: 17px; letter-spacing: 1.5px; }
+  .portal-card p { font-size: 12px; margin-top: 8px; }
+  .portal-card .arrow { margin-top: 12px; font-size: 15px; }
   /* 门户页右上角用户信息 */
   #portal-page > div:last-child { position: static !important; justify-content: center; padding: 0 16px 16px; font-size: 12px; }
   /* ——— section标题 ——— */
@@ -1191,9 +1266,11 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   /* ——— 翻页 ——— */
   .dealer-pagination button { padding: 3px 6px; font-size: 10px; }
   /* ——— 登录页 ——— */
-  .login-overlay { justify-content: center; padding-right: 16px; }
-  #portal-page { justify-content: flex-start; padding-right: 0; align-items: center; }
+  .login-overlay { justify-content: center; padding: 0 16px; }
+  #portal-page { justify-content: center; padding-left: 0; padding-right: 0; }
   .portal-cards { justify-content: center; }
+  .portal-toast-mask { padding-left: 0; padding-top: 0; align-items: flex-end; padding-bottom: 14vh; }
+  .portal-toast { padding: 16px 26px; font-size: 14px; letter-spacing: 1px; }
   .login-card { width: 90%; max-width: 360px; padding: 28px 18px; }
   .login-card .logo { font-size: 20px; }
   .login-card .sub { font-size: 11px; margin-bottom: 24px; }
@@ -1218,9 +1295,9 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   /* Nav tab更小 */
   .nav-tab { padding: 6px 10px; font-size: 11px; }
   /* 门户 */
-  .portal-cards { padding: 10px; gap: 8px; }
-  .portal-card { padding: 16px 12px; border-radius: 12px; }
-  .portal-card .icon { font-size: 30px; }
+  .portal-cards { padding: 10px; gap: 22px; }
+  .portal-card { padding: 6px 14px; }
+  .portal-card .icon { width: 54px; height: 54px; font-size: 24px; margin-bottom: 10px; }
   .portal-card h2 { font-size: 15px; }
   /* 表格 */
   th, td { font-size: 9px; padding: 2px 3px; }
@@ -1292,14 +1369,28 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
 <!-- ===== 门户选择页 ===== -->
 <div id="portal-page">
   <div class="portal-cards">
-    <div class="portal-card" onclick="showSection('incubation')">
-      <div class="icon">🏗️</div>
+    <div class="portal-card" onclick="openIncubation()">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 21h18"/>
+          <rect x="4.5" y="12" width="4" height="9" rx="0.6"/>
+          <rect x="10" y="6.5" width="4" height="14.5" rx="0.6"/>
+          <rect x="15.5" y="15" width="4" height="6" rx="0.6"/>
+        </svg>
+      </div>
       <h2>剑南春老酒孵化市场</h2>
       <p>孵化市场建设进度 + 动销情况</p>
-      <div class="arrow">→</div>
+      <span class="tag-soon">开发中</span>
     </div>
     <div class="portal-card" onclick="showSection('dealer')">
-      <div class="icon">📋</div>
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="4.2" cy="6" r="1.1"/>
+          <circle cx="4.2" cy="12" r="1.1"/>
+          <circle cx="4.2" cy="18" r="1.1"/>
+          <path d="M9 6h11M9 12h11M9 18h11"/>
+        </svg>
+      </div>
       <h2>剑南春老酒经销商明细</h2>
       <p>经销商明细情况</p>
       <div class="arrow">→</div>
@@ -1518,11 +1609,11 @@ tbody tr.total td { border-bottom: 2px solid #cbd5e1; }
   </div>
 </div>
 <div class="container">
-<div style="margin-bottom:12px">
+<div class="dealer-tab-row">
   <button class="nav-tab active" id="dealerTab1Btn" onclick="switchDealerTab(1)">经销商明细</button>
+  <button class="btn-export" onclick="exportDealerTable()">导出</button>
 </div>
 <div id="dealerTab1">
-<div class="section-title section-title-flex"><button class="btn-export" onclick="exportDealerTable()">导出</button></div>
 <div class="dealer-toolbar">
   <label>搜索：</label>
   <input type="text" id="dealerSearch" placeholder="公司名称/编码" oninput="renderDealerTable()">
@@ -1805,7 +1896,31 @@ function showPortal() {
     document.getElementById('portalUser').textContent = user + '，欢迎';
   }
 }
+// 孵化市场入口（暂时关闭）
+var INCUBATION_ENABLED = false;
+function openIncubation() {
+  if (!INCUBATION_ENABLED) { showPortalToast('当前开发中，暂时无法打开'); return; }
+  showSection('incubation');
+}
+// 门户轻提示浮层
+function showPortalToast(msg) {
+  var t = document.getElementById('portalToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'portalToast';
+    t.className = 'portal-toast-mask';
+    var inner = document.createElement('div');
+    inner.className = 'portal-toast';
+    t.appendChild(inner);
+    document.body.appendChild(t);
+  }
+  t.firstChild.textContent = msg;
+  t.classList.add('show');
+  if (t._timer) clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.classList.remove('show'); }, 2200);
+}
 function showSection(section) {
+  if (section === 'incubation' && !INCUBATION_ENABLED) { showPortalToast('当前开发中，暂时无法打开'); return; }
   document.getElementById('portal-page').style.display = 'none';
   if (section === 'incubation') {
     document.getElementById('incubation-section').style.display = 'block';
